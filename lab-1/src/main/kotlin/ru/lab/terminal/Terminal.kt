@@ -1,21 +1,52 @@
 package ru.lab.terminal
 
-import ru.lab.calculator.Result
-
 /**
  * Terminal interface provides methods for reading SLAE
  * and writing result of the calculations.
  */
 interface Terminal {
     /**
-     * Reads SLAE from terminal or file.
-     * @return read SLAE
+     * Reads SLAE matrix from terminal or file.
+     * @return read SLAE matrix
      */
-    fun readSlae(): List<List<Double>>
+    fun readSlaeMatrix(): Array<DoubleArray>
+
+    /** Prints greetings message. */
+    fun printGreetings()
+
+    /** Prints results message. */
+    fun printResults()
+
+    /** Prints separator message. */
+    fun printSeparator()
 
     /**
-     * Writes result of the calculations.
-     * @param result result of the calculations
+     * Prints entered SLAE matrix.
+     * @param slaeMatrix SLAE matrix
      */
-    fun writeResult(result: Result)
+    fun printEntered(slaeMatrix: Array<DoubleArray>)
+
+    /**
+     * Prints triangular matrix.
+     * @param triangular triangular matrix
+     */
+    fun printTriangular(triangular: Array<DoubleArray>)
+
+    /**
+     * Prints roots.
+     * @param roots SLAE roots
+     */
+    fun printRoots(roots: DoubleArray)
+
+    /**
+     * Prints residuals.
+     * @param residuals SLAE residuals
+     */
+    fun printResiduals(residuals: DoubleArray)
+
+    /**
+     * Prints determinant
+     * @param determinant SLAE determinant
+     */
+    fun printDeterminant(determinant: Double)
 }

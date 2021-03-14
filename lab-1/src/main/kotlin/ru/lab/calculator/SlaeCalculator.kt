@@ -4,39 +4,31 @@ package ru.lab.calculator
  * SLAE calculator interface provides methods for working
  * with a system of linear algebraic equations.
  */
-abstract class SlaeCalculator {
-    fun calculate(): Result {
-        val triangular = triangular()
-        return Result(
-            determinant(triangular),
-            triangular,
-            roots(),
-            residuals()
-        )
-    }
-
+interface SlaeCalculator {
     /**
      * Calculates determinant of the given SLAE.
      * @param triangular triangular matrix
      * @return determinant for the given SLAE
      */
-    abstract fun determinant(triangular: List<List<Double>>): Double
+    fun determinant(triangular: Array<DoubleArray>): Double
 
     /**
      * Creates triangular matrix for the given SLAE.
      * @return triangular matrix for the give SLAE
      */
-    abstract fun triangular(): List<List<Double>>
+    fun triangular(): Array<DoubleArray>
 
     /**
      * Finds roots for the given SLAE using the Gaussian method.
+     * @param triangular triangular matrix
      * @return list of roots for the given SLAE
      */
-    abstract fun roots(): List<Double>
+    fun roots(triangular: Array<DoubleArray>): DoubleArray
 
     /**
      * Finds residuals for the given SLAE.
+     * @param triangular triangular matrix
      * @return list of residuals for the given SLAE
      */
-    abstract fun residuals(): List<Double>
+    fun residuals(triangular: Array<DoubleArray>): DoubleArray
 }
