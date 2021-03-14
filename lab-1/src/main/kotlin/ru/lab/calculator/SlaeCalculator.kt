@@ -27,8 +27,8 @@ interface SlaeCalculator {
 
     /**
      * Finds residuals for the given SLAE.
-     * @param triangular triangular matrix
+     * @param roots SLAE matrix roots
      * @return list of residuals for the given SLAE
      */
-    fun residuals(triangular: Array<DoubleArray>): DoubleArray
+    fun residuals(roots: DoubleArray): DoubleArray
 }

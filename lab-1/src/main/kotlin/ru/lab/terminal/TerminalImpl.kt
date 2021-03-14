@@ -145,8 +145,8 @@ class TerminalImpl(private val args: Array<String>) : Terminal {
      * @param double double value
      * @return string value
      */
-    private fun formatDouble(double: Double): String {
-        return "%.2f".format(Locale.US, double)
+    private fun formatDouble(double: Double, accuracy: Int = 2): String {
+        return "%.${accuracy}f".format(Locale.US, double)
     }
 
     /**
@@ -178,7 +178,7 @@ class TerminalImpl(private val args: Array<String>) : Terminal {
     }
 
     override fun printResiduals(residuals: DoubleArray) {
-        println("Residuals vector: ${residuals.joinToString(" ") { el -> formatDouble(el) }}")
+        println("Residuals vector: ${residuals.joinToString(" ") { el -> formatDouble(el, 5) }}")
     }
 
     override fun printDeterminant(determinant: Double) {

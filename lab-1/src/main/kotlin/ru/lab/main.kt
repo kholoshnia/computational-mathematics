@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
         val triangular = slaeCalculator.triangular()
         val determinant = slaeCalculator.determinant(triangular)
         val roots = slaeCalculator.roots(triangular)
-        val residuals = slaeCalculator.residuals(triangular)
+        val residuals = slaeCalculator.residuals(roots)
 
         terminal.printResults()
         terminal.printDeterminant(determinant)

@@ -1,6 +1,9 @@
 # IDEA
 .idea
 
+# Gradle
+build/
+
 # Misc
 .DS_Store
 
