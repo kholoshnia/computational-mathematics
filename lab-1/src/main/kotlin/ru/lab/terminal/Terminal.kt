@@ -17,6 +17,9 @@ interface Terminal {
     /** Prints results message. */
     fun printResults()
 
+    /** Prints infinite or inconsistent message. */
+    fun printInfiniteOrInconsistent()
+
     /** Prints separator message. */
     fun printSeparator()
 

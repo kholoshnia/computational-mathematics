@@ -136,6 +136,10 @@ class TerminalImpl(private val args: Array<String>) : Terminal {
         println("---------------< Results >--------------")
     }
 
+    override fun printInfiniteOrInconsistent() {
+        println("SLAE has an infinite set of roots or is inconsistent")
+    }
+
     override fun printSeparator() {
         println("----------------------------------------")
     }
