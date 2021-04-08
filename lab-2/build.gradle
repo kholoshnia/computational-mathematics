@@ -1,0 +1,38 @@
+plugins {
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.8'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+}
+
+group = 'ru.lab'
+version = '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+application {
+    mainClassName = 'ru.lab.MainKt'
+}
+
+javafx {
+    version = "11.0.2"
+    modules = ['javafx.controls', 'javafx.graphics']
+}
+
+dependencies {
+    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+    implementation group: 'no.tornado', name: 'tornadofx', version: '1.7.20'
+}
+
+test {
+    useJUnit()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "11"
+}

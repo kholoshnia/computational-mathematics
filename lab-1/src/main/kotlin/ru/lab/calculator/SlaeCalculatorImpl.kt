@@ -22,9 +22,14 @@ class SlaeCalculatorImpl(private val slaeMatrix: Array<DoubleArray>) : SlaeCalcu
         }
 
         for (i in (0 until n - 1)) {
+            if (a[i][i] == 0.0) {
+                val temp = a[i]
+                a[i] = a[i + 1]
+                a[i + 1] = temp
+            }
+
             for (k in (i + 1 until n)) {
-                var c = a[k][i] / a[i][i]
-                if (c.isNaN() || c.isInfinite()) c = 0.0
+                val c = a[k][i] / a[i][i]
                 for (j in (0..n)) {
                     a[k][j] = a[k][j] - c * a[i][j]
                 }

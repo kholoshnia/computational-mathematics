@@ -182,7 +182,7 @@ class TerminalImpl(private val args: Array<String>) : Terminal {
     }
 
     override fun printResiduals(residuals: DoubleArray) {
-        println("Residuals vector: ${residuals.joinToString(" ") { el -> formatDouble(el, 5) }}")
+        println("Residuals vector: ${residuals.joinToString(" ") { el -> formatDouble(el, 20) }}")
     }
 
     override fun printDeterminant(determinant: Double) {
