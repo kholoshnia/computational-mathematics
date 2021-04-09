@@ -9,8 +9,12 @@ class Function(private val expression: Expression) {
     }
 
     operator fun invoke(x: Double): Double {
-        return expression
-            .setVariable(X_VARIABLE, x)
-            .evaluate()
+        return try {
+            expression
+                .setVariable(X_VARIABLE, x)
+                .evaluate()
+        } catch (e: ArithmeticException) {
+            Double.NaN
+        }
     }
 }

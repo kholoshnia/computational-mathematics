@@ -29,7 +29,9 @@ class FormView : View() {
     override val root = vbox {
         hbox {
             label("Function:")
-            function = textfield { action { refreshGraph() } }
+            function = textfield("1.62x^3-8.15*x^2+4.39*x+4.29") {
+                action { refreshGraph() }
+            }
         }
 
         hbox {
