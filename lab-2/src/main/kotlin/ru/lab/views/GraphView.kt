@@ -1,48 +1,45 @@
 package ru.lab.views
 
-import javafx.beans.property.Property
-import javafx.beans.property.SimpleListProperty
-import javafx.collections.ObservableList
+import javafx.collections.FXCollections
 import javafx.scene.chart.NumberAxis
 import javafx.scene.chart.XYChart
+import ru.lab.services.FunctionService
 import tornadofx.View
 import tornadofx.linechart
 import tornadofx.series
-import tornadofx.toObservable
 import tornadofx.vbox
-import kotlin.math.pow
 
 class GraphView : View() {
-    private val graph: Property<ObservableList<XYChart.Data<Number, Number>>> = SimpleListProperty()
+    private val functionService = FunctionService()
+    private val formView: FormView by inject()
+    private val graph = FXCollections.observableArrayList<XYChart.Data<Number, Number>>()
 
-    private fun y(x: Double): Double {
-        return 1.62 * x.pow(3) - 8.15 * x.pow(2) + 4.39 * x + 3.29
-    }
+    fun renderGraph() {
+        graph.clear()
 
-    init {
-        val functionString = "1,62x^3-8,15x^2+3,39x+4,29"
-        var function = functionString.replace(",", ".")
+        val function = formView.function.text
+        val left = formView.left.text.toDouble()
+        val right = formView.right.text.toDouble()
 
-        val left = -20.0
-        val right = 20.0
-        val step = 0.1
-
-        val graphValues = HashMap<Number, Number>()
+        var step = formView.step.text.toDouble()
+        if (step < 0.1) step = 0.1
 
         var x = left
+        val y = functionService.getFunction(function)
+
         while (x <= right) {
-            graphValues[x] = y(x)
+            val value = y(x)
+            if (!value.isNaN() && !value.isInfinite()) {
+                graph.add(XYChart.Data(x, y(x)))
+            }
             x += step
         }
-
-        graph.value = graphValues.map { (x, y) ->
-            XYChart.Data(x, y)
-        }.toObservable()
     }
 
+
     override val root = vbox {
-        linechart("Function graph", NumberAxis(), NumberAxis()) {
-            series("Function graph", elements = graph.value)
+        linechart(null, NumberAxis(), NumberAxis()) {
+            series("Function graph", elements = graph)
         }
     }
 }

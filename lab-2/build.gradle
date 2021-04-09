@@ -23,6 +23,7 @@ javafx {
 dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
     implementation group: 'no.tornado', name: 'tornadofx', version: '1.7.20'
+    implementation group: 'net.objecthunter', name: 'exp4j', version: 'exp4j-0.4.3.BETA-1'
 }
 
 test {
