@@ -24,6 +24,8 @@ dependencies {
     testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
     implementation group: 'no.tornado', name: 'tornadofx', version: '1.7.20'
     implementation group: 'net.objecthunter', name: 'exp4j', version: 'exp4j-0.4.3.BETA-1'
+    implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.12.2'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.12.2'
 }
 
 test {

@@ -1,60 +1,137 @@
 package ru.lab.views
 
+import javafx.geometry.Orientation
+import javafx.scene.control.Alert
+import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
+import ru.lab.controllers.ComputeController
+import ru.lab.controllers.FileController
+import ru.lab.controllers.Method
 import tornadofx.View
 import tornadofx.action
+import tornadofx.alert
+import tornadofx.button
+import tornadofx.combobox
+import tornadofx.field
+import tornadofx.fieldset
 import tornadofx.filterInput
+import tornadofx.form
 import tornadofx.hbox
 import tornadofx.isDouble
-import tornadofx.label
+import tornadofx.separator
 import tornadofx.singleAssign
 import tornadofx.textfield
-import tornadofx.vbox
+import tornadofx.toObservable
 
 class FormView : View() {
     private val graphView: GraphView by inject()
-    var function: TextField by singleAssign()
-    var left: TextField by singleAssign()
-    var right: TextField by singleAssign()
-    var step: TextField by singleAssign()
+    private val halfView: HalfView by inject()
+    private val fileController: FileController by inject()
+    private val computeController: ComputeController by inject()
+
+    private var function: TextField by singleAssign()
+    private var left: TextField by singleAssign()
+    private var right: TextField by singleAssign()
+    private var accuracy: TextField by singleAssign()
+    private var method: ComboBox<Method> by singleAssign()
 
     private fun refreshGraph() {
         try {
             graphView.renderGraph()
         } catch (e: IllegalArgumentException) {
-            print(e.message)
+            alert(Alert.AlertType.WARNING, "Computing error", e.message)
         }
     }
 
-    override val root = vbox {
-        hbox {
-            label("Function:")
-            function = textfield("1.62x^3-8.15*x^2+4.39*x+4.29") {
-                action { refreshGraph() }
+    override val root = form {
+        fieldset("Function") {
+            field {
+                function = textfield("1/x") {
+                    action { refreshGraph() }
+                }
             }
         }
 
-        hbox {
-            label("Left:")
-            left = textfield("-20") {
-                filterInput { it.controlNewText.isDouble() }
-                action { refreshGraph() }
+        fieldset("Parameters") {
+            field("Left boundary:") {
+                left = textfield("-2") {
+                    filterInput { it.controlNewText.isDouble() }
+                    action { refreshGraph() }
+                }
+            }
+
+            field("Right boundary:") {
+                right = textfield("2") {
+                    filterInput { it.controlNewText.isDouble() }
+                    action { refreshGraph() }
+                }
+            }
+
+            field("Accuracy:") {
+                accuracy = textfield("0.5") {
+                    filterInput { it.controlNewText.isDouble() }
+                    action { refreshGraph() }
+                }
+            }
+
+            field("Method:") {
+                method = combobox {
+                    items = Method.values().toList().toObservable()
+                }
             }
         }
 
-        hbox {
-            label("Right:")
-            right = textfield("20") {
-                filterInput { it.controlNewText.isDouble() }
-                action { refreshGraph() }
-            }
-        }
+        hbox(20) {
+            fieldset("Results") {
+                field {
+                    button("Show & Compute") {
+                        action {
+                            refreshGraph()
 
-        hbox {
-            label("Step:")
-            step = textfield("0.5") {
-                filterInput { it.controlNewText.isDouble() }
-                action { refreshGraph() }
+                            if (method.value == Method.HALF) {
+                                /*computeController.halfDivision(
+
+                                )*/
+                            }
+                        }
+                    }
+                }
+
+                field {
+                    button("Calculation table") {
+                        action {
+                            if (method.value == Method.HALF) {
+                                halfView.openWindow()
+                            }
+                        }
+                    }
+                }
+            }
+
+            separator(Orientation.VERTICAL)
+
+            fieldset("File") {
+                field {
+                    button("Import") {
+                        action {
+                            val settings = fileController.importSettings()
+                            if (settings != null) {
+                                function.text = settings.function
+                                left.text = settings.left
+                                right.text = settings.right
+                                accuracy.text = settings.accuracy
+                            }
+                        }
+                    }
+                }
+
+                field {
+                    button("Export") {
+                        action {
+                            // TODO export results
+                        }
+                    }
+                }
             }
         }
     }

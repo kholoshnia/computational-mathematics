@@ -1,0 +1,4 @@
+function: x^2
+left: -6
+right: 5
+accuracy: 0.5

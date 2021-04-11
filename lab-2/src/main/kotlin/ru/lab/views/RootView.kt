@@ -12,7 +12,8 @@ class RootView : View() {
         left = vbox {
             add(formView)
         }
-        center = vbox {
+
+        right = vbox {
             add(graphView)
         }
     }
