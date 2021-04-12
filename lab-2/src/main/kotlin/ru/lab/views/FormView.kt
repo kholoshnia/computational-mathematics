@@ -1,12 +1,13 @@
 package ru.lab.views
 
+import com.fasterxml.jackson.core.JacksonException
 import javafx.geometry.Orientation
 import javafx.scene.control.Alert
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
-import ru.lab.controllers.ComputeController
-import ru.lab.controllers.FileController
-import ru.lab.controllers.Method
+import ru.lab.controllers.MethodController
+import ru.lab.controllers.SettingsController
+import ru.lab.model.Method
 import tornadofx.View
 import tornadofx.action
 import tornadofx.alert
@@ -25,58 +26,62 @@ import tornadofx.toObservable
 
 class FormView : View() {
     private val graphView: GraphView by inject()
-    private val halfView: HalfView by inject()
-    private val fileController: FileController by inject()
-    private val computeController: ComputeController by inject()
+    private val settingsController: SettingsController by inject()
+    private val methodController: MethodController by inject()
 
-    var function: TextField by singleAssign()
-    var left: TextField by singleAssign()
-    var right: TextField by singleAssign()
-    var accuracy: TextField by singleAssign()
-    var method: ComboBox<Method> by singleAssign()
+    var functionTextField: TextField by singleAssign()
+    var leftTextField: TextField by singleAssign()
+    var rightTextField: TextField by singleAssign()
+    var stepTextField: TextField by singleAssign()
+    var accuracyTextField: TextField by singleAssign()
+    var methodComboBox: ComboBox<String> by singleAssign()
 
-    private fun refreshGraph() {
-        try {
-            graphView.renderGraph()
-        } catch (e: IllegalArgumentException) {
-            alert(Alert.AlertType.WARNING, "Computing error", e.message)
-        }
+    private fun isDoubleInput(input: String): Boolean {
+        return input
+            .replace("^[-+]$".toRegex(), "0")
+            .replace(",".toRegex(), ".")
+            .isDouble()
     }
 
     override val root = form {
         fieldset("Function") {
             field {
-                function = textfield("x^2-2") {
-                    action { refreshGraph() }
-                }
+                functionTextField = textfield("x^2-2")
             }
         }
 
         fieldset("Parameters") {
             field("Left boundary:") {
-                left = textfield("0") {
-                    filterInput { it.controlNewText.isDouble() }
-                    action { refreshGraph() }
+                leftTextField = textfield("0") {
+                    filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
 
             field("Right boundary:") {
-                right = textfield("3") {
-                    filterInput { it.controlNewText.isDouble() }
-                    action { refreshGraph() }
+                rightTextField = textfield("3") {
+                    filterInput { isDoubleInput(it.controlNewText) }
+                }
+            }
+
+            field("Step:") {
+                stepTextField = textfield("0.5") {
+                    filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
 
             field("Accuracy:") {
-                accuracy = textfield("0.005") {
-                    filterInput { it.controlNewText.isDouble() }
-                    action { refreshGraph() }
+                accuracyTextField = textfield("0.01") {
+                    filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
 
             field("Method:") {
-                method = combobox {
-                    items = Method.values().toList().toObservable()
+                methodComboBox = combobox {
+                    items = Method.values()
+                        .map { it.method }
+                        .toList()
+                        .toObservable()
+                    selectionModel.selectFirst()
                 }
             }
         }
@@ -84,24 +89,30 @@ class FormView : View() {
         hbox(20) {
             fieldset("Results") {
                 field {
-                    button("Show & Compute") {
+                    button("Draw") {
                         action {
-                            refreshGraph()
-
-                            if (method.value == Method.HALF) {
-                                /*computeController.halfDivision(
-
-                                )*/
+                            try {
+                                graphView.renderGraph()
+                            } catch (e: IllegalArgumentException) {
+                                alert(Alert.AlertType.WARNING, "Function error", e.message)
                             }
                         }
                     }
                 }
 
                 field {
-                    button("Calculation table") {
+                    button("Show & Compute") {
                         action {
-                            if (method.value == Method.HALF) {
-                                halfView.openWindow()
+                            try {
+                                methodController.showResults()
+                            } catch (e: IllegalArgumentException) {
+                                alert(Alert.AlertType.WARNING, "Results error", e.message)
+                            } catch (e: ArithmeticException) {
+                                alert(
+                                    Alert.AlertType.WARNING,
+                                    "Results error",
+                                    "Cannot compute not continuous function: ${e.message}"
+                                )
                             }
                         }
                     }
@@ -114,12 +125,17 @@ class FormView : View() {
                 field {
                     button("Import") {
                         action {
-                            val settings = fileController.importSettings()
-                            if (settings != null) {
-                                function.text = settings.function
-                                left.text = settings.left
-                                right.text = settings.right
-                                accuracy.text = settings.accuracy
+                            try {
+                                val settings = settingsController.importSettings()
+
+                                if (settings != null) {
+                                    functionTextField.text = settings.function
+                                    leftTextField.text = settings.left
+                                    rightTextField.text = settings.right
+                                    accuracyTextField.text = settings.accuracy
+                                }
+                            } catch (e: JacksonException) {
+                                alert(Alert.AlertType.WARNING, "Import error", e.message)
                             }
                         }
                     }
@@ -128,7 +144,16 @@ class FormView : View() {
                 field {
                     button("Export") {
                         action {
-                            // TODO export results
+                            try {
+                                if (methodController.isLastResultsInitialized()) {
+                                    val results = methodController.lastResults
+                                    settingsController.exportSettings(results)
+                                } else {
+                                    alert(Alert.AlertType.WARNING, "Export error", "No last results found.")
+                                }
+                            } catch (e: JacksonException) {
+                                alert(Alert.AlertType.WARNING, "Export error", e.message)
+                            }
                         }
                     }
                 }

@@ -1,7 +1,7 @@
-package ru.lab.model
+package ru.lab.model.results
 
-data class Half(
-    var i: Int,
+data class HalfDivisionResults(
+    var n: Int,
     var a: Double,
     var b: Double,
     var x: Double,
