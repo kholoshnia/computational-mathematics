@@ -13,6 +13,7 @@ class HalfView : View() {
 
     override val root = vbox {
         tableview(rows) {
+            readonlyColumn("№", Half::i)
             readonlyColumn("a", Half::a)
             readonlyColumn("b", Half::b)
             readonlyColumn("x", Half::x)

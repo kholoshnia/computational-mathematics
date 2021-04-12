@@ -29,11 +29,11 @@ class FormView : View() {
     private val fileController: FileController by inject()
     private val computeController: ComputeController by inject()
 
-    private var function: TextField by singleAssign()
-    private var left: TextField by singleAssign()
-    private var right: TextField by singleAssign()
-    private var accuracy: TextField by singleAssign()
-    private var method: ComboBox<Method> by singleAssign()
+    var function: TextField by singleAssign()
+    var left: TextField by singleAssign()
+    var right: TextField by singleAssign()
+    var accuracy: TextField by singleAssign()
+    var method: ComboBox<Method> by singleAssign()
 
     private fun refreshGraph() {
         try {
@@ -46,7 +46,7 @@ class FormView : View() {
     override val root = form {
         fieldset("Function") {
             field {
-                function = textfield("1/x") {
+                function = textfield("x^2-2") {
                     action { refreshGraph() }
                 }
             }
@@ -54,21 +54,21 @@ class FormView : View() {
 
         fieldset("Parameters") {
             field("Left boundary:") {
-                left = textfield("-2") {
+                left = textfield("0") {
                     filterInput { it.controlNewText.isDouble() }
                     action { refreshGraph() }
                 }
             }
 
             field("Right boundary:") {
-                right = textfield("2") {
+                right = textfield("3") {
                     filterInput { it.controlNewText.isDouble() }
                     action { refreshGraph() }
                 }
             }
 
             field("Accuracy:") {
-                accuracy = textfield("0.5") {
+                accuracy = textfield("0.005") {
                     filterInput { it.controlNewText.isDouble() }
                     action { refreshGraph() }
                 }
