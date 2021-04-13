@@ -46,7 +46,7 @@ class MethodController : Controller() {
             x += accuracy
 
             if (derivative * rise <= 0) {
-                return true
+                return false // true
             }
         }
 

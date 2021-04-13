@@ -44,19 +44,19 @@ class FormView : View() {
     override val root = form {
         fieldset("Function") {
             field {
-                functionTextField = textfield("x^2-2")
+                functionTextField = textfield("1.62*x^3-8.15*x^2+4.39*x+4.29")
             }
         }
 
         fieldset("Parameters") {
             field("Left boundary:") {
-                leftTextField = textfield("0") {
+                leftTextField = textfield("-20") {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
 
             field("Right boundary:") {
-                rightTextField = textfield("3") {
+                rightTextField = textfield("20") {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
