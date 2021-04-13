@@ -52,7 +52,7 @@ class SimpleIterationsMethod : Controller() {
     ) {
         simpleIterationsView.rows.clear()
 
-        val lambda = 1 / maxDf(left, right, function, accuracy)
+        val lambda = -1.0 / maxDf(left, right, function, accuracy)
 
         var n = 0
         var xPrev = methodController.findX0(function, left, right, accuracy)
@@ -63,8 +63,8 @@ class SimpleIterationsMethod : Controller() {
         while (!stopCriteria(xPrev, xNext, accuracy)) {
             simpleIterationsView.rows.add(SimpleIterationsResults(n, xPrev, fx, xNext, xNext, xPrevXNext))
 
-            xNext = fi(xPrev, lambda, function)
             xPrev = xNext
+            xNext = fi(xPrev, lambda, function)
 
             fx = function(xPrev)
             xPrevXNext = abs(xPrev - xNext)

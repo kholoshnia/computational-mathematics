@@ -36,12 +36,10 @@ class FormView : View() {
     var accuracyTextField: TextField by singleAssign()
     var methodComboBox: ComboBox<String> by singleAssign()
 
-    private fun isDoubleInput(input: String): Boolean {
-        return input
-            .replace("^[-+]$".toRegex(), "0")
-            .replace(",".toRegex(), ".")
-            .isDouble()
-    }
+    private fun isDoubleInput(input: String) = input
+        .replace("^[-+]$".toRegex(), "0")
+        .replace(",".toRegex(), ".")
+        .isDouble()
 
     override val root = form {
         fieldset("Function") {
@@ -70,7 +68,7 @@ class FormView : View() {
             }
 
             field("Accuracy:") {
-                accuracyTextField = textfield("0.01") {
+                accuracyTextField = textfield("0.001") {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
             }

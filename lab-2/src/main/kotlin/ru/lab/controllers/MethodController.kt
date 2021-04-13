@@ -24,17 +24,13 @@ class MethodController : Controller() {
     private val simpleIterationsMethod: SimpleIterationsMethod by inject()
 
     lateinit var lastResults: Results
-    fun isLastResultsInitialized(): Boolean {
-        return ::lastResults.isInitialized
-    }
+    fun isLastResultsInitialized() = ::lastResults.isInitialized
 
     private fun hasRoots(
         function: Function,
         left: Double,
         right: Double,
-    ): Boolean {
-        return function(left) * function(right) < 0
-    }
+    ) = function(left) * function(right) < 0
 
     private fun moreThanOneRoot(
         function: Function,

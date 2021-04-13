@@ -5,6 +5,7 @@ import javafx.scene.image.Image
 import javafx.stage.Stage
 import ru.lab.views.RootView
 import tornadofx.App
+import java.awt.Toolkit
 
 
 class App : App(RootView::class) {
@@ -13,13 +14,14 @@ class App : App(RootView::class) {
 
         if (os.indexOf("mac") >= 0 || os.indexOf("darwin") >= 0) {
             val application = Application.getApplication()
-            application.dockIconImage = java.awt.Toolkit.getDefaultToolkit().getImage("icon.png")
+            application.dockIconImage = Toolkit.getDefaultToolkit().getImage("icon.png")
         }
 
         stage.icons.clear()
         stage.icons.add(Image("icon.png"))
         stage.titleProperty().unbind()
         stage.title = "Lab 2"
+        stage.isResizable = false
 
         super.start(stage)
     }

@@ -37,8 +37,8 @@ class NewtonMethod : Controller() {
         while (!stopCriteria(xPrev, function, accuracy)) {
             newtonView.rows.add(NewtonResults(n, xPrev, fx, dx, xNext, xPrevXNext))
 
-            xNext = xPrev - function(xPrev) / function.derivative(xPrev, accuracy)
             xPrev = xNext
+            xNext = xPrev - function(xPrev) / function.derivative(xPrev, accuracy)
 
             fx = function(xPrev)
             dx = function.derivative(xPrev, accuracy)

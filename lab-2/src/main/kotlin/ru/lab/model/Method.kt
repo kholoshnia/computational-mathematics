@@ -6,8 +6,6 @@ enum class Method(val method: String) {
     SIMPLE_ITERATIONS("Simple iterations");
 
     companion object {
-        fun find(method: String): Method? {
-            return values().find { it.method == method }
-        }
+        fun find(method: String) = values().find { it.method == method }
     }
 }
