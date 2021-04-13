@@ -37,21 +37,8 @@ class MethodController : Controller() {
         left: Double,
         right: Double,
         accuracy: Double
-    ): Boolean {
-        var x = left
-        val rise = function.derivative(x, accuracy)
-
-        while (x <= right) {
-            val derivative = function.derivative(x, accuracy)
-            x += accuracy
-
-            if (derivative * rise <= 0) {
-                return false // true
-            }
-        }
-
-        return false
-    }
+    ) = function.derivative(function.derivative(left, accuracy), accuracy) < 0
+            && function.derivative(function.derivative(right, accuracy), accuracy) < 0
 
     fun showResults() {
         val function = formController.getFunction()
@@ -60,31 +47,33 @@ class MethodController : Controller() {
         val accuracy = formController.getAccuracy()
         val method = formController.getMethod()
 
-        if (!hasRoots(function, leftBoundary, rightBoundary)) {
-            throw IllegalArgumentException("There are no roots in the selected area.")
-        } else if (moreThanOneRoot(function, leftBoundary, rightBoundary, accuracy)) {
-            throw IllegalArgumentException("There is more than one root in the selected area.")
-        } else {
-            when (method) {
-                Method.NEWTON -> {
-                    newtonView.openWindow()
-                    runLater {
-                        newtonMethod.compute(function, leftBoundary, rightBoundary, accuracy)
+        if (hasRoots(function, leftBoundary, rightBoundary)) {
+            if (!moreThanOneRoot(function, leftBoundary, rightBoundary, accuracy)) {
+                when (method) {
+                    Method.NEWTON -> {
+                        newtonView.openWindow()
+                        runLater {
+                            newtonMethod.compute(function, leftBoundary, rightBoundary, accuracy)
+                        }
+                    }
+                    Method.SIMPLE_ITERATIONS -> {
+                        simpleIterationsView.openWindow()
+                        runLater {
+                            simpleIterationsMethod.compute(function, leftBoundary, rightBoundary, accuracy)
+                        }
+                    }
+                    else -> {
+                        halfDivisionView.openWindow()
+                        runLater {
+                            halfDivisionMethod.compute(function, leftBoundary, rightBoundary, accuracy)
+                        }
                     }
                 }
-                Method.SIMPLE_ITERATIONS -> {
-                    simpleIterationsView.openWindow()
-                    runLater {
-                        simpleIterationsMethod.compute(function, leftBoundary, rightBoundary, accuracy)
-                    }
-                }
-                else -> {
-                    halfDivisionView.openWindow()
-                    runLater {
-                        halfDivisionMethod.compute(function, leftBoundary, rightBoundary, accuracy)
-                    }
-                }
+            } else {
+                throw IllegalArgumentException("There is more than one root in the selected area.")
             }
+        } else {
+            throw IllegalArgumentException("There are no roots in the selected area.")
         }
     }
 
@@ -93,18 +82,5 @@ class MethodController : Controller() {
         left: Double,
         right: Double,
         accuracy: Double
-    ): Double {
-        var x0 = left
-        var x = left
-
-        while (x <= right) {
-            x0 = function(x) * function.derivative(function.derivative(x, accuracy), accuracy)
-            if (x0 > 0) {
-                break
-            }
-            x += accuracy
-        }
-
-        return x0
-    }
+    ) = if (function(left) * function.derivative(function.derivative(left, accuracy), accuracy) > 0) left else right
 }

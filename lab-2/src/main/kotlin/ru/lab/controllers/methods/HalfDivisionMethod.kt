@@ -16,9 +16,7 @@ class HalfDivisionMethod : Controller() {
         function: Function,
         x: Double,
         accuracy: Double,
-        a: Double,
-        b: Double
-    ) = abs(function(x)) < accuracy || abs(a - b) < accuracy
+    ) = abs(function(x)) < accuracy
 
     fun compute(
         function: Function,
@@ -37,7 +35,7 @@ class HalfDivisionMethod : Controller() {
         var fx = function(x)
         var ab = abs(a - b)
 
-        while (!stopCriteria(function, x, accuracy, a, b)) {
+        while (true) {
             halfDivisionView.rows.add(HalfDivisionResults(n, a, b, x, fa, fb, fx, ab))
 
             x = (a + b) / 2.0
@@ -53,6 +51,10 @@ class HalfDivisionMethod : Controller() {
             }
 
             n++
+
+            if (stopCriteria(function, x, accuracy)) {
+                break
+            }
         }
 
         halfDivisionView.rows.add(HalfDivisionResults(n, a, b, x, fa, fb, fx, ab))

@@ -18,18 +18,17 @@ class SimpleIterationsMethod : Controller() {
         function: Function,
         accuracy: Double
     ): Double {
-        var x = a
-        var derivative = function.derivative(x, accuracy)
-        var max = derivative
-        while (x <= b) {
-            x += accuracy
-            derivative = function.derivative(x, accuracy)
-            if (derivative > max) {
-                max = derivative
-            }
-        }
-        return max
+        val da = function.derivative(a, accuracy)
+        val db = function.derivative(b, accuracy)
+        return if (da > db) da else db
     }
+
+    private fun dfi(
+        x: Double,
+        lambda: Double,
+        function: Function,
+        accuracy: Double
+    ) = 1 + lambda * function.derivative(x, accuracy)
 
     private fun fi(
         x: Double,
@@ -38,11 +37,9 @@ class SimpleIterationsMethod : Controller() {
     ) = x + lambda * function(x)
 
     private fun stopCriteria(
-        xNext: Double,
-        xPrev:
-        Double,
+        xPrevXNext: Double,
         accuracy: Double
-    ) = abs(xNext - xPrev) <= accuracy
+    ) = xPrevXNext <= accuracy
 
     fun compute(
         function: Function,
@@ -53,6 +50,7 @@ class SimpleIterationsMethod : Controller() {
         simpleIterationsView.rows.clear()
 
         val lambda = -1.0 / maxDf(left, right, function, accuracy)
+        println("Lambda=$lambda")
 
         var n = 0
         var xPrev = methodController.findX0(function, left, right, accuracy)
@@ -60,7 +58,13 @@ class SimpleIterationsMethod : Controller() {
         var fx = function(xPrev)
         var xPrevXNext = abs(xPrev - xNext)
 
-        while (!stopCriteria(xPrev, xNext, accuracy)) {
+        if (dfi(left, lambda, function, accuracy) >= 1
+            && dfi(right, lambda, function, accuracy) <= 1
+        ) {
+            throw IllegalArgumentException("Process is not continuous.")
+        }
+
+        while (!stopCriteria(xPrevXNext, accuracy)) {
             simpleIterationsView.rows.add(SimpleIterationsResults(n, xPrev, fx, xNext, xNext, xPrevXNext))
 
             xPrev = xNext

@@ -7,4 +7,8 @@ data class SimpleIterationsResults(
     var xkNext: Double,
     var fiXk: Double,
     var xkXkNext: Double,
-)
+) {
+    override fun toString(): String {
+        return "SimpleIterationsResults(n=$n, xk=$xk, fxk=$fxk, xkNext=$xkNext, fiXk=$fiXk, xkXkNext=$xkXkNext)"
+    }
+}
