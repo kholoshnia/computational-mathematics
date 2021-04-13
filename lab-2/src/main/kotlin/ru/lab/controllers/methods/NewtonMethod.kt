@@ -14,11 +14,9 @@ class NewtonMethod : Controller() {
 
     private fun stopCriteria(
         xPrev: Double,
-        xNext: Double,
         function: Function,
         accuracy: Double
-    ) = abs(xPrev - xNext) < accuracy
-            || abs(function(xPrev) / function.derivative(xPrev, accuracy)) < accuracy
+    ) = abs(function(xPrev) / function.derivative(xPrev, accuracy)) < accuracy
             || abs(function(xPrev)) < accuracy
 
     fun compute(
@@ -36,7 +34,7 @@ class NewtonMethod : Controller() {
         var dx = function.derivative(xPrev, accuracy)
         var xPrevXNext = abs(xPrev - xNext)
 
-        while (!stopCriteria(xPrev, xNext, function, accuracy)) {
+        while (!stopCriteria(xPrev, function, accuracy)) {
             newtonView.rows.add(NewtonResults(n, xPrev, fx, dx, xNext, xPrevXNext))
 
             xNext = xPrev - function(xPrev) / function.derivative(xPrev, accuracy)

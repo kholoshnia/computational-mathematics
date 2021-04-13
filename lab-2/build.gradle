@@ -2,6 +2,7 @@ plugins {
     id 'application'
     id 'org.openjfx.javafxplugin' version '0.0.8'
     id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+    id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
 group = 'ru.lab'
@@ -26,6 +27,7 @@ dependencies {
     implementation group: 'net.objecthunter', name: 'exp4j', version: 'exp4j-0.4.3.BETA-1'
     implementation group: 'com.fasterxml.jackson.module', name: 'jackson-module-kotlin', version: '2.12.2'
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.12.2'
+    implementation group: 'com.apple', name: 'AppleJavaExtensions', version: '1.4'
 }
 
 test {

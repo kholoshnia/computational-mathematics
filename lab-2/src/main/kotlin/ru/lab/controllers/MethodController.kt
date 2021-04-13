@@ -45,7 +45,7 @@ class MethodController : Controller() {
         var x = left
         val rise = function.derivative(x, accuracy)
 
-        while (x < right) {
+        while (x <= right) {
             val derivative = function.derivative(x, accuracy)
             x += accuracy
 
@@ -101,7 +101,7 @@ class MethodController : Controller() {
         var x0 = left
         var x = left
 
-        while (x < right) {
+        while (x <= right) {
             x0 = function(x) * function.derivative(function.derivative(x, accuracy), accuracy)
             if (x0 > 0) {
                 break
