@@ -9,15 +9,17 @@ class TrapezoidsMethod : Controller() {
         left: Double,
         right: Double,
         partitioning: Int,
+        accuracy: Double
     ): Double {
         val h = (right - left) / partitioning
         var value = 0.0
 
         var x = left + h
         while (x <= right) {
-            try {
-                value += function(x)
+            value += try {
+                function(x)
             } catch (_: ArithmeticException) {
+                function(x + accuracy)
             }
 
             x += h
@@ -26,13 +28,13 @@ class TrapezoidsMethod : Controller() {
         val leftValue = try {
             function(left)
         } catch (_: ArithmeticException) {
-            function(left + h)
+            function(left + accuracy)
         }
 
         val rightValue = try {
             function(right)
         } catch (_: ArithmeticException) {
-            function(right + h)
+            function(right + accuracy)
         }
 
         return h * ((leftValue + rightValue) / 2.0 + value)

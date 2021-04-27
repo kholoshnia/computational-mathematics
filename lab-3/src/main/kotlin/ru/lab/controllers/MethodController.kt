@@ -24,6 +24,7 @@ class MethodController : Controller() {
         leftBoundary: Double,
         rightBoundary: Double,
         partitioning: Int,
+        accuracy: Double,
         rectangle: Rectangle
     ): Double {
         return when (method) {
@@ -32,7 +33,8 @@ class MethodController : Controller() {
                     function,
                     leftBoundary,
                     rightBoundary,
-                    partitioning
+                    partitioning,
+                    accuracy
                 )
             }
             Method.TRAPEZOIDS -> {
@@ -40,7 +42,8 @@ class MethodController : Controller() {
                     function,
                     leftBoundary,
                     rightBoundary,
-                    partitioning
+                    partitioning,
+                    accuracy
                 )
             }
             else -> {
@@ -49,6 +52,7 @@ class MethodController : Controller() {
                     leftBoundary,
                     rightBoundary,
                     partitioning,
+                    accuracy,
                     rectangle
                 )
             }
@@ -73,6 +77,7 @@ class MethodController : Controller() {
             leftBoundary,
             rightBoundary,
             iterPartitioning,
+            accuracy,
             rectangle
         )
 
@@ -87,6 +92,7 @@ class MethodController : Controller() {
                     leftBoundary,
                     rightBoundary,
                     iterPartitioning,
+                    accuracy,
                     rectangle
                 )
             } while (abs(newResult - result) > accuracy)

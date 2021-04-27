@@ -10,6 +10,7 @@ class RectangleMethod : Controller() {
         left: Double,
         right: Double,
         partitioning: Int,
+        accuracy: Double,
         rectangle: Rectangle
     ): Double {
         val h = (right - left) / partitioning
@@ -29,9 +30,10 @@ class RectangleMethod : Controller() {
 
         var x = left + h
         while (x <= right) {
-            try {
-                value += typeFunction(x)
+            value += try {
+                typeFunction(x)
             } catch (_: ArithmeticException) {
+                typeFunction(x + accuracy)
             }
 
             x += h
