@@ -30,7 +30,13 @@ class FunctionController : Controller() {
             try {
                 val value = function(x)
                 seriesList.getOrElse(gaps) {
-                    seriesList.add(gaps, XYChart.Series())
+                    try {
+                        seriesList.add(gaps, XYChart.Series())
+                    } catch (e: IndexOutOfBoundsException) {
+                        gaps = 0
+                        seriesList.add(gaps, XYChart.Series())
+                    }
+
                     seriesList[gaps]
                 }.data.add(XYChart.Data(x, value))
             } catch (e: ArithmeticException) {

@@ -29,7 +29,11 @@ class RectangleMethod : Controller() {
 
         var x = left + h
         while (x <= right) {
-            value += typeFunction(x)
+            try {
+                value += typeFunction(x)
+            } catch (_: ArithmeticException) {
+            }
+
             x += h
         }
 

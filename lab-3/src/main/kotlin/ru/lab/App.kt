@@ -13,7 +13,7 @@ class App : App(RootView::class) {
 
         if (os.indexOf("mac") >= 0 || os.indexOf("darwin") >= 0) {
             val application = Application.getApplication()
-            application.dockIconImage = Toolkit.getDefaultToolkit().getImage("icon.png")
+            application.dockIconImage = Toolkit.getDefaultToolkit().getImage("/Users/vadim/Documents/GitHub/kholoshnia/computational-mathematics/lab-3/src/main/resources/icon.png")
         }
 
         stage.icons.clear()

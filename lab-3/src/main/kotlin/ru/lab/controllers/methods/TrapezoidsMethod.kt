@@ -15,10 +15,26 @@ class TrapezoidsMethod : Controller() {
 
         var x = left + h
         while (x <= right) {
-            value += function(x)
+            try {
+                value += function(x)
+            } catch (_: ArithmeticException) {
+            }
+
             x += h
         }
 
-        return h * ((function(left) + function(right)) / 2.0 + value)
+        val leftValue = try {
+            function(left)
+        } catch (_: ArithmeticException) {
+            function(left + h)
+        }
+
+        val rightValue = try {
+            function(right)
+        } catch (_: ArithmeticException) {
+            function(right + h)
+        }
+
+        return h * ((leftValue + rightValue) / 2.0 + value)
     }
 }

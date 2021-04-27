@@ -13,7 +13,11 @@ class SimpsonsMethod : Controller() {
         var x = left
         var result = 0.0
         while (x <= right) {
-            result += function(x)
+            try {
+                result += function(x)
+            } catch (_: ArithmeticException) {
+            }
+
             x += h * 2
         }
         return result
@@ -30,6 +34,12 @@ class SimpsonsMethod : Controller() {
         val oddValue = sum(h, left + h, right, function)
         val evenValue = sum(h, left + h * 2, right - h, function)
 
-        return h / 3.0 * (function(left) + 4.0 * oddValue + 2.0 * evenValue + function(right))
+        val leftValue = try {
+            function(left)
+        } catch (_: ArithmeticException) {
+            function(left + h)
+        }
+
+        return h / 3.0 * (leftValue + 4.0 * oddValue + 2.0 * evenValue + function(right))
     }
 }
