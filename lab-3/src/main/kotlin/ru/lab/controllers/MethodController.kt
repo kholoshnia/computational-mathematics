@@ -12,6 +12,11 @@ import kotlin.math.abs
 
 
 class MethodController : Controller() {
+    companion object {
+        private const val MULTIPLY_NUMBER = 2
+        private const val MAX_ITERATIONS_NUMBER = 1000000
+    }
+
     private val formController: FormController by inject()
     private val breakController: BreakController by inject()
     private val resultsView: ResultsView by inject()
@@ -22,12 +27,12 @@ class MethodController : Controller() {
 
     private fun compute(
         method: Method,
+        rectangle: Rectangle,
         function: Function,
         leftBoundary: Double,
         rightBoundary: Double,
         partitioning: Int,
-        accuracy: Double,
-        rectangle: Rectangle
+        accuracy: Double
     ): Double {
         return when (method) {
             Method.SIMPSONS -> {
@@ -87,7 +92,6 @@ class MethodController : Controller() {
         val partitioning = formController.getPartitioning()
         val method = formController.getMethod()
         val rectangle = formController.getRectangle()
-
         val useAccuracy = formController.useAccuracy()
         val accuracy = formController.getAccuracy()
 
@@ -96,12 +100,12 @@ class MethodController : Controller() {
 
         var result = compute(
             method,
+            rectangle,
             function,
             left,
             right,
             partitioning,
-            accuracy,
-            rectangle
+            accuracy
         )
 
         var nextResult = result
@@ -109,18 +113,20 @@ class MethodController : Controller() {
 
         if (useAccuracy) {
             do {
-                nextPartitioning *= 2
+                nextPartitioning *= MULTIPLY_NUMBER
                 result = nextResult
                 nextResult = compute(
                     method,
+                    rectangle,
                     function,
                     left,
                     right,
                     nextPartitioning,
-                    accuracy,
-                    rectangle
+                    accuracy
                 )
-            } while (abs(nextResult - result) > accuracy)
+            } while (abs(nextResult - result) > accuracy
+                && nextPartitioning < MAX_ITERATIONS_NUMBER
+            )
         }
 
         resultsView.valueValue.text = nextResult.toString()

@@ -22,7 +22,7 @@ class SimpsonsMethod : Controller() {
             val nextX = breakController.checkElseNext(function, x, right, accuracy)
             result += function(nextX)
 
-            while (x < nextX + accuracy) {
+            while (x <= nextX) {
                 x += h * 2
             }
         }

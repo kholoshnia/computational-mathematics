@@ -19,11 +19,11 @@ class TrapezoidsMethod : Controller() {
         var result = 0.0
         var x = left + h
 
-        while (x <= right) {
+        while (x <= right - h) {
             val nextX = breakController.checkElseNext(function, x, right, accuracy)
             result += function(nextX)
 
-            while (x < nextX + accuracy) {
+            while (x <= nextX) {
                 x += h
             }
         }
