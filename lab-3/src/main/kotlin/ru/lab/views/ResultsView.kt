@@ -8,6 +8,7 @@ import tornadofx.paddingTop
 import tornadofx.singleAssign
 import tornadofx.vbox
 
+
 class ResultsView : View() {
     private var valueLabel: Label by singleAssign()
     private var partitioningLabel: Label by singleAssign()

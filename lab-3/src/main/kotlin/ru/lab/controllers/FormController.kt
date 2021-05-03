@@ -5,6 +5,7 @@ import ru.lab.model.Rectangle
 import ru.lab.views.FormView
 import tornadofx.Controller
 
+
 class FormController : Controller() {
     private val formView: FormView by inject()
     private val functionController: FunctionController by inject()

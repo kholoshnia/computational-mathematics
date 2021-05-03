@@ -10,8 +10,10 @@ import ru.lab.views.ResultsView
 import tornadofx.Controller
 import kotlin.math.abs
 
+
 class MethodController : Controller() {
     private val formController: FormController by inject()
+    private val breakController: BreakController by inject()
     private val resultsView: ResultsView by inject()
 
     private val rectangleMethod: RectangleMethod by inject()
@@ -46,15 +48,34 @@ class MethodController : Controller() {
                     accuracy
                 )
             }
-            else -> {
-                rectangleMethod.compute(
-                    function,
-                    leftBoundary,
-                    rightBoundary,
-                    partitioning,
-                    accuracy,
-                    rectangle
-                )
+            else -> when (rectangle) {
+                Rectangle.RIGHT -> {
+                    rectangleMethod.right(
+                        function,
+                        leftBoundary,
+                        rightBoundary,
+                        partitioning,
+                        accuracy
+                    )
+                }
+                Rectangle.MIDDLE -> {
+                    rectangleMethod.middle(
+                        function,
+                        leftBoundary,
+                        rightBoundary,
+                        partitioning,
+                        accuracy
+                    )
+                }
+                else -> {
+                    rectangleMethod.left(
+                        function,
+                        leftBoundary,
+                        rightBoundary,
+                        partitioning,
+                        accuracy
+                    )
+                }
             }
         }
     }
@@ -70,35 +91,39 @@ class MethodController : Controller() {
         val useAccuracy = formController.useAccuracy()
         val accuracy = formController.getAccuracy()
 
-        var iterPartitioning = partitioning
+        val left = breakController.checkElseNext(function, leftBoundary, rightBoundary, accuracy)
+        val right = breakController.checkElsePrev(function, rightBoundary, leftBoundary, accuracy)
+
         var result = compute(
             method,
             function,
-            leftBoundary,
-            rightBoundary,
-            iterPartitioning,
+            left,
+            right,
+            partitioning,
             accuracy,
             rectangle
         )
 
-        var newResult: Double = result
+        var nextResult = result
+        var nextPartitioning = partitioning
+
         if (useAccuracy) {
             do {
-                iterPartitioning *= 2
-                result = newResult
-                newResult = compute(
+                nextPartitioning *= 2
+                result = nextResult
+                nextResult = compute(
                     method,
                     function,
-                    leftBoundary,
-                    rightBoundary,
-                    iterPartitioning,
+                    left,
+                    right,
+                    nextPartitioning,
                     accuracy,
                     rectangle
                 )
-            } while (abs(newResult - result) > accuracy)
+            } while (abs(nextResult - result) > accuracy)
         }
 
-        resultsView.valueValue.text = newResult.toString()
-        resultsView.partitioningValue.text = iterPartitioning.toString()
+        resultsView.valueValue.text = nextResult.toString()
+        resultsView.partitioningValue.text = nextPartitioning.toString()
     }
 }

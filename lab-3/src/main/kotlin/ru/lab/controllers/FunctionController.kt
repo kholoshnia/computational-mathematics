@@ -6,6 +6,7 @@ import net.objecthunter.exp4j.ExpressionBuilder
 import ru.lab.model.Function
 import tornadofx.Controller
 
+
 class FunctionController : Controller() {
     fun getFunction(functionString: String): Function {
         val function = functionString.replace(",", ".")
@@ -33,7 +34,10 @@ class FunctionController : Controller() {
                     try {
                         seriesList.add(gaps, XYChart.Series())
                     } catch (e: IndexOutOfBoundsException) {
-                        gaps = 0
+                        if (gaps > 0) {
+                            gaps--
+                        }
+
                         seriesList.add(gaps, XYChart.Series())
                     }
 

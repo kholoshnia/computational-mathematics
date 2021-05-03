@@ -1,44 +1,86 @@
 package ru.lab.controllers.methods
 
+import ru.lab.controllers.BreakController
 import ru.lab.model.Function
-import ru.lab.model.Rectangle
 import tornadofx.Controller
 
+
 class RectangleMethod : Controller() {
-    fun compute(
+    private val breakController: BreakController by inject()
+
+    fun left(
         function: Function,
         left: Double,
         right: Double,
         partitioning: Int,
         accuracy: Double,
-        rectangle: Rectangle
     ): Double {
         val h = (right - left) / partitioning
-        var value = 0.0
-
-        val typeFunction = when (rectangle) {
-            Rectangle.MIDDLE -> {
-                fun(x: Double) = function(x - h / 2.0)
-            }
-            Rectangle.RIGHT -> {
-                fun(x: Double) = function(x)
-            }
-            else -> {
-                fun(x: Double) = function(x - h)
-            }
-        }
+        var result = 0.0
 
         var x = left + h
         while (x <= right) {
-            value += try {
-                typeFunction(x)
-            } catch (_: ArithmeticException) {
-                typeFunction(x + accuracy)
-            }
+            var current = x - h
+            val nextX = breakController.checkElsePrev(function, current, left, accuracy)
 
-            x += h
+            result += function(nextX)
+
+            while (current <= nextX + accuracy) {
+                x += h
+                current = x - h
+            }
         }
 
-        return h * value
+        return h * result
+    }
+
+    fun right(
+        function: Function,
+        left: Double,
+        right: Double,
+        partitioning: Int,
+        accuracy: Double,
+    ): Double {
+        val h = (right - left) / partitioning
+        var result = 0.0
+
+        var x = left + h
+        while (x <= right) {
+            val nextX = breakController.checkElseNext(function, x, right, accuracy)
+
+            result += function(nextX)
+
+            while (x <= nextX + accuracy) {
+                x += h
+            }
+        }
+
+        return h * result
+    }
+
+    fun middle(
+        function: Function,
+        left: Double,
+        right: Double,
+        partitioning: Int,
+        accuracy: Double,
+    ): Double {
+        val h = (right - left) / partitioning
+        var result = 0.0
+
+        var x = left + h
+        while (x <= right) {
+            var current = x - h / 2.0
+            val nextX = breakController.checkElseNext(function, current, right, accuracy)
+
+            result += function(nextX)
+
+            while (current < nextX + accuracy) {
+                x += h
+                current = x - h / 2.0
+            }
+        }
+
+        return h * result
     }
 }

@@ -1,9 +1,13 @@
 package ru.lab.controllers.methods
 
+import ru.lab.controllers.BreakController
 import ru.lab.model.Function
 import tornadofx.Controller
 
+
 class TrapezoidsMethod : Controller() {
+    private val breakController: BreakController by inject()
+
     fun compute(
         function: Function,
         left: Double,
@@ -12,31 +16,18 @@ class TrapezoidsMethod : Controller() {
         accuracy: Double
     ): Double {
         val h = (right - left) / partitioning
-        var value = 0.0
-
+        var result = 0.0
         var x = left + h
+
         while (x <= right) {
-            value += try {
-                function(x)
-            } catch (_: ArithmeticException) {
-                function(x + accuracy)
+            val nextX = breakController.checkElseNext(function, x, right, accuracy)
+            result += function(nextX)
+
+            while (x < nextX + accuracy) {
+                x += h
             }
-
-            x += h
         }
 
-        val leftValue = try {
-            function(left)
-        } catch (_: ArithmeticException) {
-            function(left + accuracy)
-        }
-
-        val rightValue = try {
-            function(right)
-        } catch (_: ArithmeticException) {
-            function(right + accuracy)
-        }
-
-        return h * ((leftValue + rightValue) / 2.0 + value)
+        return h * ((function(left) + function(right)) / 2.0 + result)
     }
 }

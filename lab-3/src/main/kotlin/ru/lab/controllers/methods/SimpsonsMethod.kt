@@ -1,9 +1,13 @@
 package ru.lab.controllers.methods
 
+import ru.lab.controllers.BreakController
 import ru.lab.model.Function
 import tornadofx.Controller
 
+
 class SimpsonsMethod : Controller() {
+    private val breakController: BreakController by inject()
+
     private fun sum(
         h: Double,
         left: Double,
@@ -13,15 +17,16 @@ class SimpsonsMethod : Controller() {
     ): Double {
         var x = left
         var result = 0.0
-        while (x <= right) {
-            result += try {
-                function(x)
-            } catch (_: ArithmeticException) {
-                function(x + accuracy)
-            }
 
-            x += h * 2
+        while (x <= right) {
+            val nextX = breakController.checkElseNext(function, x, right, accuracy)
+            result += function(nextX)
+
+            while (x < nextX + accuracy) {
+                x += h * 2
+            }
         }
+
         return result
     }
 
@@ -34,15 +39,9 @@ class SimpsonsMethod : Controller() {
     ): Double {
         val h = (right - left) / partitioning
 
-        val oddValue = sum(h, left + h, right, function, accuracy)
-        val evenValue = sum(h, left + h * 2, right - h, function, accuracy)
+        val oddValue = sum(h, left + h, right - h, function, accuracy)
+        val evenValue = sum(h, left + h * 2, right - h * 2, function, accuracy)
 
-        val leftValue = try {
-            function(left)
-        } catch (_: ArithmeticException) {
-            function(left + accuracy)
-        }
-
-        return h / 3.0 * (leftValue + 4.0 * oddValue + 2.0 * evenValue + function(right))
+        return h / 3.0 * (function(left) + 4.0 * oddValue + 2.0 * evenValue + function(right))
     }
 }

@@ -11,6 +11,7 @@ import tornadofx.View
 import tornadofx.linechart
 import tornadofx.vbox
 
+
 class GraphView : View() {
     private val formController: FormController by inject()
     private val functionController: FunctionController by inject()

@@ -2,6 +2,7 @@ package ru.lab.model
 
 import net.objecthunter.exp4j.Expression
 
+
 class Function(private val expression: Expression) {
     companion object {
         const val VARIABLE_NAME = "x"

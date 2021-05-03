@@ -29,6 +29,7 @@ import tornadofx.singleAssign
 import tornadofx.textfield
 import tornadofx.toObservable
 
+
 class FormView : View() {
     private val graphView: GraphView by inject()
     private val resultsView: ResultsView by inject()
@@ -115,6 +116,8 @@ class FormView : View() {
 
                         setOnAction {
                             rectangleField.isVisible = formController.getMethod() == Method.RECTANGLE
+                            resultsView.valueValue.text = ""
+                            resultsView.partitioningValue.text = ""
                         }
                     }
                 }
@@ -127,6 +130,11 @@ class FormView : View() {
                             .toObservable()
                         selectionModel.selectFirst()
                         maxWidth = 85.0
+
+                        setOnAction {
+                            resultsView.valueValue.text = ""
+                            resultsView.partitioningValue.text = ""
+                        }
                     }
                 }
             }
