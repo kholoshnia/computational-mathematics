@@ -42,7 +42,7 @@ class FormView : View() {
     var stepTextField: TextField by singleAssign()
     var accuracyCheckbox: CheckBox by singleAssign()
     var accuracyTextField: TextField by singleAssign()
-    var partitioningTextField: TextField by singleAssign()
+    var initialPartitioningTextField: TextField by singleAssign()
     var methodComboBox: ComboBox<String> by singleAssign()
     var rectangleComboBox: ComboBox<String> by singleAssign()
 
@@ -83,8 +83,8 @@ class FormView : View() {
                 }
             }
 
-            field("Partitioning:") {
-                partitioningTextField = textfield("4") {
+            field("Initial partitioning:") {
+                initialPartitioningTextField = textfield("4") {
                     filterInput { isIntInput(it.controlNewText) }
                 }
             }
@@ -158,7 +158,7 @@ class FormView : View() {
                     button("Show & Compute") {
                         action {
                             try {
-                                methodController.showResults()
+                                methodController.computeResults()
                             } catch (e: IllegalArgumentException) {
                                 alert(Alert.AlertType.WARNING, "Results error", e.message)
                             } catch (e: ArithmeticException) {

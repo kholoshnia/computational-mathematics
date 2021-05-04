@@ -1,4 +1,0 @@
-function: 1.62*x^3-8.15*x^2+4.39*x+4.29
-left: -20
-right: 20
-accuracy: 0.001

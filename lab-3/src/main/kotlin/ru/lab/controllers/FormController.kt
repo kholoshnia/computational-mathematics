@@ -29,7 +29,7 @@ class FormController : Controller() {
         return if (step < 0.01) 0.01 else step
     }
 
-    fun getPartitioning() = formView.partitioningTextField.text.toInt()
+    fun getInitialPartitioning() = formView.initialPartitioningTextField.text.toInt()
 
     fun getMethod() = Method.find(formView.methodComboBox.value) ?: Method.RECTANGLE
 

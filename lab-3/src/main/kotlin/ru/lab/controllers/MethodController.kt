@@ -12,11 +12,6 @@ import kotlin.math.abs
 
 
 class MethodController : Controller() {
-    companion object {
-        private const val MULTIPLY_NUMBER = 2
-        private const val MAX_ITERATIONS_NUMBER = 1000000
-    }
-
     private val formController: FormController by inject()
     private val breakController: BreakController by inject()
     private val resultsView: ResultsView by inject()
@@ -31,105 +26,119 @@ class MethodController : Controller() {
         function: Function,
         leftBoundary: Double,
         rightBoundary: Double,
-        partitioning: Int,
-        accuracy: Double
+        partitioning: Int
     ): Double {
         return when (method) {
-            Method.SIMPSONS -> {
-                simpsonsMethod.compute(
-                    function,
-                    leftBoundary,
-                    rightBoundary,
-                    partitioning,
-                    accuracy
-                )
-            }
-            Method.TRAPEZOIDS -> {
-                trapezoidsMethod.compute(
-                    function,
-                    leftBoundary,
-                    rightBoundary,
-                    partitioning,
-                    accuracy
-                )
-            }
+            Method.SIMPSONS -> simpsonsMethod.compute(
+                function,
+                leftBoundary,
+                rightBoundary,
+                partitioning
+            )
+            Method.TRAPEZOIDS -> trapezoidsMethod.compute(
+                function,
+                leftBoundary,
+                rightBoundary,
+                partitioning
+            )
             else -> when (rectangle) {
-                Rectangle.RIGHT -> {
-                    rectangleMethod.right(
-                        function,
-                        leftBoundary,
-                        rightBoundary,
-                        partitioning,
-                        accuracy
-                    )
-                }
-                Rectangle.MIDDLE -> {
-                    rectangleMethod.middle(
-                        function,
-                        leftBoundary,
-                        rightBoundary,
-                        partitioning,
-                        accuracy
-                    )
-                }
-                else -> {
-                    rectangleMethod.left(
-                        function,
-                        leftBoundary,
-                        rightBoundary,
-                        partitioning,
-                        accuracy
-                    )
-                }
+                Rectangle.RIGHT -> rectangleMethod.right(
+                    function,
+                    leftBoundary,
+                    rightBoundary,
+                    partitioning
+                )
+                Rectangle.MIDDLE -> rectangleMethod.middle(
+                    function,
+                    leftBoundary,
+                    rightBoundary,
+                    partitioning
+                )
+                else -> rectangleMethod.left(
+                    function,
+                    leftBoundary,
+                    rightBoundary,
+                    partitioning
+                )
             }
         }
     }
 
-    fun showResults() {
+    private fun computeIntegral(
+        method: Method,
+        rectangle: Rectangle,
+        function: Function,
+        leftBoundary: Double,
+        rightBoundary: Double,
+        initialPartitioning: Int,
+        useAccuracy: Boolean,
+        accuracy: Double
+    ): Pair<Double, Int> {
+        val intervals = breakController.getIntervals(
+            function,
+            leftBoundary,
+            rightBoundary,
+            accuracy
+        )
+
+        var result = intervals.sumOf {
+            compute(
+                method,
+                rectangle,
+                function,
+                it.first,
+                it.second,
+                initialPartitioning
+            )
+        }
+
+        if (useAccuracy) {
+            var nextResult = result
+            var nextPartitioning = initialPartitioning
+
+            do {
+                nextPartitioning *= 2
+                result = nextResult
+                nextResult = intervals.sumOf {
+                    compute(
+                        method,
+                        rectangle,
+                        function,
+                        it.first,
+                        it.second,
+                        nextPartitioning
+                    )
+                }
+            } while (abs(nextResult - result) >= accuracy)
+
+            return Pair(nextResult, nextPartitioning)
+        }
+
+        return Pair(result, initialPartitioning)
+    }
+
+    fun computeResults() {
         val function = formController.getFunction()
         val leftBoundary = formController.getLeftBoundary()
         val rightBoundary = formController.getRightBoundary()
-        val partitioning = formController.getPartitioning()
+        val initialPartitioning = formController.getInitialPartitioning()
         val method = formController.getMethod()
         val rectangle = formController.getRectangle()
         val useAccuracy = formController.useAccuracy()
         val accuracy = formController.getAccuracy()
 
-        val left = breakController.checkElseNext(function, leftBoundary, rightBoundary, accuracy)
-        val right = breakController.checkElsePrev(function, rightBoundary, leftBoundary, accuracy)
-
-        var result = compute(
+        val (result, partitioning) = computeIntegral(
             method,
             rectangle,
             function,
-            left,
-            right,
-            partitioning,
+            leftBoundary,
+            rightBoundary,
+            initialPartitioning,
+            useAccuracy,
             accuracy
         )
 
-        var nextResult = result
-        var nextPartitioning = partitioning
-
-        if (useAccuracy) {
-            do {
-                nextPartitioning *= MULTIPLY_NUMBER
-                result = nextResult
-                nextResult = compute(
-                    method,
-                    rectangle,
-                    function,
-                    left,
-                    right,
-                    nextPartitioning,
-                    accuracy
-                )
-            } while (abs(nextResult - result) > accuracy
-                && nextPartitioning < MAX_ITERATIONS_NUMBER
-            )
-        }
-
-        resultsView.valueValue.text = nextResult.toString()
-        resultsView.partitioningValue.text = nextPartitioning.toString()
+        resultsView.valueValue.text = result.toString()
+        resultsView.partitioningValue.text = partitioning.toString()
     }
 }

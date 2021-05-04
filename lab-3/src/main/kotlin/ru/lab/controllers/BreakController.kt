@@ -2,54 +2,39 @@ package ru.lab.controllers
 
 import ru.lab.model.Function
 import tornadofx.Controller
+import kotlin.math.roundToInt
 
 
 class BreakController : Controller() {
-    fun checkElseNext(
+    fun getIntervals(
         function: Function,
-        current: Double,
+        left: Double,
         right: Double,
         accuracy: Double
-    ): Double {
-        var x = current
+    ): List<Pair<Double, Double>> {
+        val intervals = ArrayList<Pair<Double, Double>>()
+        var lastLeft = left
 
+        var x = left
         while (x <= right) {
             try {
-                function(x)
-                break
+                function((x / accuracy).roundToInt() * accuracy)
             } catch (_: ArithmeticException) {
-                x += accuracy
+                lastLeft = if (x == left) {
+                    x + accuracy
+                } else {
+                    intervals.add(Pair(lastLeft, x - accuracy))
+                    x + accuracy
+                }
             }
+
+            x += accuracy
         }
 
-        if (x > right + accuracy) {
-            throw IllegalArgumentException("Could not find next value")
+        if (lastLeft < right) {
+            intervals.add(Pair(lastLeft, right))
         }
 
-        return x
-    }
-
-    fun checkElsePrev(
-        function: Function,
-        current: Double,
-        left: Double,
-        accuracy: Double
-    ): Double {
-        var x = current
-
-        while (x >= left) {
-            try {
-                function(x)
-                break
-            } catch (_: ArithmeticException) {
-                x -= accuracy
-            }
-        }
-
-        if (x < left - accuracy) {
-            throw IllegalArgumentException("Could not find previous value")
-        }
-
-        return x
+        return intervals
     }
 }
