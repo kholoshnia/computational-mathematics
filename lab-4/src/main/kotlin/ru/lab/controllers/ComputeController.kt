@@ -164,7 +164,7 @@ class ComputeController : Controller() {
             )
         }
 
-        val source = functionController.getSeries("Source", xValues, yValues)
+        val source = functionController.getSeries("Source", xValues, yValues, left, right)
         graphView.addSeries(source)
 
         val best: String = getBest()

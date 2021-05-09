@@ -50,12 +50,16 @@ class FunctionController : Controller() {
         name: String,
         xValues: List<Double>,
         yValues: List<Double>,
+        left: Double,
+        right: Double
     ): XYChart.Series<Number, Number> {
         val series = XYChart.Series<Number, Number>()
         series.name = name
 
         for (i in xValues.indices) {
-            series.data.add(XYChart.Data(xValues[i], yValues[i]))
+            if (i >= left && i <= right) {
+                series.data.add(XYChart.Data(xValues[i], yValues[i]))
+            }
         }
 
         return series
