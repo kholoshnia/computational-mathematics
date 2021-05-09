@@ -18,7 +18,9 @@ import kotlin.math.sqrt
 
 class ComputeController : Controller() {
     companion object {
-        const val PIERSON = "Pierson coefficient: %s"
+        private const val LEFT_OFFSET = 10
+        private const val RIGHT_OFFSET = 10
+        private const val PIERSON = "Pierson coefficient: %s"
     }
 
     private val formController: FormController by inject()
@@ -122,15 +124,20 @@ class ComputeController : Controller() {
     fun compute() {
         val xValues = formController.getXValues()
         val yValues = formController.getYValues()
+
+        if (xValues.size != yValues.size) {
+            throw IllegalArgumentException("X and Y values are not equal in size")
+        }
+
         val step = formController.getStep()
-        val left = formController.getLeftBoundary() ?: xValues.first() - 10
-        val right = formController.getRightBoundary() ?: xValues.last() + 10
+        val left = formController.getLeftBoundary() ?: xValues.first() - LEFT_OFFSET
+        val right = formController.getRightBoundary() ?: xValues.last() + RIGHT_OFFSET
 
         graphView.clear()
         resultsView.clear()
 
         approximationList.forEach { (type, it) ->
-            val functionString = it.getFunction(xValues, yValues)
+            val functionString = it.getFunction(xValues, yValues) ?: return@forEach
             val name = type.printName
             val approximation = functionController.getFunction(functionString)
             val deviationMeasure = getDeviationMeasure(xValues, yValues, approximation)
@@ -157,9 +164,10 @@ class ComputeController : Controller() {
             )
         }
 
-        val best: String = getBest()
+        val source = functionController.getSeries("Source", xValues, yValues)
+        graphView.addSeries(source)
 
+        val best: String = getBest()
         resultsView.setBest(best)
-        resultsView.openWindow()
     }
 }

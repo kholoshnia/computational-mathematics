@@ -18,8 +18,11 @@ class GraphView : View() {
     fun addSeries(series: XYChart.Series<Number, Number>) = seriesList.add(series)
 
     override val root = vbox {
-        linechart("Function graph", NumberAxis(), NumberAxis()) {
+        linechart("Functions graph", NumberAxis(), NumberAxis()) {
+            prefWidth = 800.0
+            prefHeight = 700.0
             cursor = Cursor.CROSSHAIR
+
             setData(seriesList)
         }
     }

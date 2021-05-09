@@ -1,31 +1,41 @@
 package ru.lab.controllers.approximations
 
 import ru.lab.controllers.Approximation
+import ru.lab.controllers.SlaeController
 import tornadofx.Controller
+import kotlin.math.E
+import kotlin.math.ln
 import kotlin.math.pow
 
+
 class ExponentialApproximation : Approximation, Controller() {
+    private val slaeController: SlaeController by inject()
+
     override fun getFunction(
         xValues: List<Double>,
         yValues: List<Double>
-    ): String {
-        val n = xValues.size
-        val sx = xValues.sum()
-        val sxx = xValues.sumOf { it.pow(2) }
-        val sy = yValues.sumOf { it.pow(2) }
+    ): String? {
+        if (xValues.any { it <= 0 }) {
+            return null
+        }
+
+        val n = xValues.size.toDouble()
+        val sx = xValues.sumOf { it }
+        val sx2 = xValues.sumOf { it.pow(2) }
+        val sy = yValues.sumOf { ln(it) }
 
         var sxy = 0.0
         for (i in xValues.indices) {
-            sxy += xValues[i] * yValues[i]
+            sxy += xValues[i] * ln(yValues[i])
         }
 
-        val delta = sxx * n - sx * sy
-        val delta1 = sxy * n - sx * sy
-        val delta2 = sxx * sy - sx * sxy
+        val (a, b) = slaeController.solve(
+            arrayOf(
+                doubleArrayOf(sx2, sx, sxy),
+                doubleArrayOf(sx, n, sy)
+            )
+        )
 
-        val a = delta1 / delta
-        val b = delta2 / delta
-
-        return "log($a)+$b*x"
+        return "$E^$a*$E^(${b}x)"
     }
 }

@@ -11,7 +11,7 @@ class FormController : Controller() {
         .replace(",", ".")
         .toDouble()
 
-    private fun toDoubleList(string: String) = string.split(" ")
+    private fun toDoubleList(string: String) = string.split(" +".toRegex())
         .map { toDouble(it) }
         .toList()
 

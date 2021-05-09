@@ -1,31 +1,43 @@
 package ru.lab.controllers.approximations
 
 import ru.lab.controllers.Approximation
+import ru.lab.controllers.SlaeController
 import tornadofx.Controller
 import kotlin.math.pow
 
+
 class SquareApproximation : Approximation, Controller() {
+    private val slaeController: SlaeController by inject()
+
     override fun getFunction(
         xValues: List<Double>,
         yValues: List<Double>
     ): String {
-        val n = xValues.size
+        val n = xValues.size.toDouble()
         val sx = xValues.sum()
-        val sxx = xValues.sumOf { it.pow(2) }
-        val sy = yValues.sumOf { it.pow(2) }
+        val sx2 = xValues.sumOf { it.pow(2) }
+        val sx3 = xValues.sumOf { it.pow(3) }
+        val sx4 = xValues.sumOf { it.pow(4) }
+        val sy = yValues.sum()
 
         var sxy = 0.0
         for (i in xValues.indices) {
             sxy += xValues[i] * yValues[i]
         }
 
-        val delta = sxx * n - sx * sy
-        val delta1 = sxy * n - sx * sy
-        val delta2 = sxx * sy - sx * sxy
+        var sx2y = 0.0
+        for (i in xValues.indices) {
+            sx2y += xValues[i].pow(2) * yValues[i]
+        }
 
-        val a = delta1 / delta
-        val b = delta2 / delta
+        val (a0, a1, a2) = slaeController.solve(
+            arrayOf(
+                doubleArrayOf(n, sx, sx2, sy),
+                doubleArrayOf(sx, sx2, sx3, sxy),
+                doubleArrayOf(sx2, sx3, sx4, sx2y)
+            )
+        )
 
-        return "${a}x+$b"
+        return "$a0+${a1}x+${a2}x^2"
     }
 }

@@ -1,8 +1,10 @@
 package ru.lab.views
 
+import javafx.geometry.Orientation
 import javafx.scene.control.Alert
 import javafx.scene.control.TextField
 import ru.lab.controllers.ComputeController
+import ru.lab.controllers.FileController
 import tornadofx.View
 import tornadofx.action
 import tornadofx.alert
@@ -11,18 +13,22 @@ import tornadofx.field
 import tornadofx.fieldset
 import tornadofx.filterInput
 import tornadofx.form
+import tornadofx.hbox
 import tornadofx.isDouble
+import tornadofx.separator
 import tornadofx.singleAssign
 import tornadofx.textfield
 
 
 class FormView : View() {
     companion object {
-        private const val X_VALUES = "-11 -9 -8 -7 -6 -5 -4 -3 -2 -1 0 1 2 3 4 5 6 7 8 9 10"
-        private const val Y_VALUES = "172 124 103 84 67 52 39 28 19 12 7 4 3 4 7 12 19 28 39 52 67"
+        private const val X_VALUES = "1,1 2,3 3,7 4,5 5,4 6,8 7,5"
+        private const val Y_VALUES = "2,73 5,12 7,74 8,91 10,59 12,75 13,43"
     }
 
+    private val fileController: FileController by inject()
     private val computeController: ComputeController by inject()
+    private val resultsView: ResultsView by inject()
 
     var xValuesTextField: TextField by singleAssign()
     var yValuesTextField: TextField by singleAssign()
@@ -66,14 +72,77 @@ class FormView : View() {
             }
         }
 
-        fieldset("Actions") {
-            field {
-                button("Show & Compute") {
-                    action {
-                        try {
-                            computeController.compute()
-                        } catch (e: Exception) {
-                            alert(Alert.AlertType.WARNING, "Results error", e.message)
+        hbox(20) {
+            fieldset("Actions") {
+                field {
+                    button("Compute") {
+                        action {
+                            try {
+                                computeController.compute()
+                            } catch (e: Exception) {
+                                alert(Alert.AlertType.WARNING, "Results error", e.message)
+                            }
+                        }
+                    }
+                }
+
+                field {
+                    button("Show") {
+                        action {
+                            val results = resultsView.getResults()
+
+                            if (results.isEmpty()) {
+                                alert(
+                                    Alert.AlertType.INFORMATION,
+                                    "No results",
+                                    "Please, compute results use show"
+                                )
+                            } else {
+                                resultsView.openWindow()
+                            }
+                        }
+                    }
+                }
+            }
+
+            separator(Orientation.VERTICAL)
+
+            fieldset("File") {
+                field {
+                    button("Import") {
+                        action {
+                            try {
+                                val values = fileController.importTable()
+
+                                if (values != null) {
+                                    xValuesTextField.text = values.first
+                                    yValuesTextField.text = values.second
+                                }
+                            } catch (e: Exception) {
+                                alert(Alert.AlertType.WARNING, "Import error", e.message)
+                            }
+                        }
+                    }
+                }
+
+                field {
+                    button("Export") {
+                        action {
+                            try {
+                                val results = resultsView.getResults()
+
+                                if (results.isEmpty()) {
+                                    alert(
+                                        Alert.AlertType.INFORMATION,
+                                        "No results",
+                                        "Please, compute results to use export"
+                                    )
+                                } else {
+                                    fileController.exportResults(results)
+                                }
+                            } catch (e: Exception) {
+                                alert(Alert.AlertType.WARNING, "Export error", e.message)
+                            }
                         }
                     }
                 }
