@@ -15,7 +15,7 @@ class ExponentialApproximation : Approximation, Controller() {
         xValues: List<Double>,
         yValues: List<Double>
     ): String? {
-        if (xValues.any { it <= 0 }) {
+        if (yValues.any { it <= 0 }) {
             return null
         }
 
