@@ -155,18 +155,12 @@ class FormView : View() {
                 }
 
                 field {
-                    button("Show & Compute") {
+                    button("Compute") {
                         action {
                             try {
                                 methodController.computeResults()
                             } catch (e: IllegalArgumentException) {
                                 alert(Alert.AlertType.WARNING, "Results error", e.message)
-                            } catch (e: ArithmeticException) {
-                                alert(
-                                    Alert.AlertType.WARNING,
-                                    "Results error",
-                                    "Cannot compute not continuous function: ${e.message}"
-                                )
                             }
                         }
                     }

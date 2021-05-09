@@ -99,7 +99,7 @@ class FormView : View() {
                 }
 
                 field {
-                    button("Show & Compute") {
+                    button("Compute") {
                         action {
                             try {
                                 methodController.showResults()
