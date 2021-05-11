@@ -14,7 +14,7 @@ class ExponentialApproximation : Approximation, Controller() {
     override fun getFunction(
         xValues: List<Double>,
         yValues: List<Double>
-    ): String? {
+    ): Pair<String, String>? {
         if (yValues.any { it <= 0 }) {
             return null
         }
@@ -36,6 +36,11 @@ class ExponentialApproximation : Approximation, Controller() {
             )
         )
 
-        return "$E^$a*$E^(${b}x)"
+        return Pair(
+            "$E^$a*$E^(${b}x)",
+            "${String.format("%.3f", E)}^${String.format("%.3f", a)}*${
+                String.format("%.3f", E)
+            }^(${String.format("%.3f", b)}x)"
+        )
     }
 }

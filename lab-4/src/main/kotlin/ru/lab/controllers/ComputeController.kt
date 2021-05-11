@@ -106,11 +106,11 @@ class ComputeController : Controller() {
         return numerator / denominator
     }
 
-    private fun getBest(): String {
+    private fun getBest(resultsList: List<Results>): String {
         var best = ""
         var minRSquare = Double.MAX_VALUE
 
-        resultsView.getResults().forEach {
+        resultsList.forEach {
             val distanceTo1 = abs(1 - it.rSquare.toDouble())
             if (distanceTo1 < minRSquare) {
                 minRSquare = distanceTo1
@@ -132,33 +132,45 @@ class ComputeController : Controller() {
         val step = formController.getStep()
         val left = formController.getLeftBoundary() ?: xValues.first() - LEFT_OFFSET
         val right = formController.getRightBoundary() ?: xValues.last() + RIGHT_OFFSET
+        val resultsList = ArrayList<Results>()
 
         graphView.clear()
         resultsView.clear()
 
         approximationList.forEach { (type, it) ->
-            val functionString = it.getFunction(xValues, yValues) ?: return@forEach
+            val functionPair = it.getFunction(xValues, yValues) ?: return@forEach
             val name = type.printName
-            val approximation = functionController.getFunction(functionString)
+            val approximation = functionController.getFunction(functionPair.first)
             val deviationMeasure = getDeviationMeasure(xValues, yValues, approximation)
             val rmdDeviation = getRmsDeviation(xValues, yValues, approximation)
             val rSquare = getRSquare(xValues, yValues, approximation)
 
             val other = if (type == Types.LINEAR) {
-                val pierson = getPiersonCoefficient(xValues, yValues)
+                val pierson = String.format("%.3f", getPiersonCoefficient(xValues, yValues))
                 PIERSON.format(pierson)
             } else ""
 
             val series = functionController.getSeries(name, approximation, left, right, step)
             graphView.addSeries(series)
 
-            resultsView.addResults(
+            resultsList.add(
                 Results(
                     name,
-                    functionString,
+                    functionPair.first,
                     deviationMeasure.toString(),
                     rmdDeviation.toString(),
                     rSquare.toString(),
+                    other
+                )
+            )
+
+            resultsView.addResults(
+                Results(
+                    name,
+                    functionPair.second,
+                    String.format("%.3f", deviationMeasure),
+                    String.format("%.3f", rmdDeviation),
+                    String.format("%.3f", rSquare),
                     other
                 )
             )
@@ -167,7 +179,7 @@ class ComputeController : Controller() {
         val source = functionController.getSeries("Source", xValues, yValues, left, right)
         graphView.addSeries(source)
 
-        val best: String = getBest()
+        val best: String = getBest(resultsList)
         resultsView.setBest(best)
     }
 }

@@ -12,7 +12,7 @@ class LinearApproximation : Approximation, Controller() {
     override fun getFunction(
         xValues: List<Double>,
         yValues: List<Double>
-    ): String {
+    ): Pair<String, String> {
         val n = xValues.size.toDouble()
         val sx = xValues.sum()
         val sx2 = xValues.sumOf { it.pow(2) }
@@ -30,6 +30,9 @@ class LinearApproximation : Approximation, Controller() {
             )
         )
 
-        return "${a}x+$b"
+        return Pair(
+            "${a}x+$b",
+            "${String.format("%.3f", a)}x+${String.format("%.3f", b)}"
+        )
     }
 }

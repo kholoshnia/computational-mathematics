@@ -13,7 +13,7 @@ class LogarithmApproximation : Approximation, Controller() {
     override fun getFunction(
         xValues: List<Double>,
         yValues: List<Double>
-    ): String? {
+    ): Pair<String, String>? {
         if (xValues.any { it <= 0 }) {
             return null
         }
@@ -35,6 +35,9 @@ class LogarithmApproximation : Approximation, Controller() {
             )
         )
 
-        return "${b}log(x)+$a"
+        return Pair(
+            "${b}log(x)+$a",
+            "${String.format("%.3f", b)}log(x)+${String.format("%.3f", a)}"
+        )
     }
 }

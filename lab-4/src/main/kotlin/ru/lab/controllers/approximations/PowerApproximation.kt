@@ -14,7 +14,7 @@ class PowerApproximation : Approximation, Controller() {
     override fun getFunction(
         xValues: List<Double>,
         yValues: List<Double>
-    ): String? {
+    ): Pair<String, String>? {
         if (xValues.any { it <= 0 }) {
             return null
         }
@@ -36,6 +36,9 @@ class PowerApproximation : Approximation, Controller() {
             )
         )
 
-        return "$E^$a*x^$b"
+        return Pair(
+            "$E^$a*x^$b",
+            "${String.format("%.3f", E)}^${String.format("%.3f", a)}*x^${String.format("%.3f", b)}"
+        )
     }
 }

@@ -12,7 +12,7 @@ class SquareApproximation : Approximation, Controller() {
     override fun getFunction(
         xValues: List<Double>,
         yValues: List<Double>
-    ): String {
+    ): Pair<String, String> {
         val n = xValues.size.toDouble()
         val sx = xValues.sum()
         val sx2 = xValues.sumOf { it.pow(2) }
@@ -38,6 +38,9 @@ class SquareApproximation : Approximation, Controller() {
             )
         )
 
-        return "$a0+${a1}x+${a2}x^2"
+        return Pair(
+            "$a0+${a1}x+${a2}x^2",
+            "${String.format("%.3f", a0)}+${String.format("%.3f", a1)}x+${String.format("%.3f", a2)}x^2"
+        )
     }
 }

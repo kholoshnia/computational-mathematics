@@ -1,0 +1,35 @@
+package ru.lab.controllers.approximations
+
+import ru.lab.controllers.Approximation
+import ru.lab.controllers.SlaeController
+import tornadofx.Controller
+import kotlin.math.pow
+
+
+class LinearApproximation : Approximation, Controller() {
+    private val slaeController: SlaeController by inject()
+
+    override fun getFunction(
+        xValues: List<Double>,
+        yValues: List<Double>
+    ): String {
+        val n = xValues.size.toDouble()
+        val sx = xValues.sum()
+        val sx2 = xValues.sumOf { it.pow(2) }
+        val sy = yValues.sumOf { it }
+
+        var sxy = 0.0
+        for (i in xValues.indices) {
+            sxy += xValues[i] * yValues[i]
+        }
+
+        val (a, b) = slaeController.solve(
+            arrayOf(
+                doubleArrayOf(sx2, sx, sxy),
+                doubleArrayOf(sx, n, sy)
+            )
+        )
+
+        return "${a}x+$b"
+    }
+}
