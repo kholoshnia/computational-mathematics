@@ -15,7 +15,7 @@ class PowerApproximation : Approximation, Controller() {
         xValues: List<Double>,
         yValues: List<Double>
     ): Pair<String, String>? {
-        if (xValues.any { it <= 0 }) {
+        if (xValues.any { it <= 0 } || yValues.any { it <= 0 }) {
             return null
         }
 

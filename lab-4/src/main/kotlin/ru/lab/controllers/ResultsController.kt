@@ -13,12 +13,17 @@ class ResultsController : Controller() {
 
     fun getResultsString(results: List<Results>): String {
         return results.joinToString(NEW_LINE) {
-            ResultsView.NAME + COLON_SPACE.format(it.name) + NEW_LINE +
+            var result = ResultsView.NAME + COLON_SPACE.format(it.name) + NEW_LINE +
                     ResultsView.APPROXIMATION + COLON_SPACE.format(it.approximation) + NEW_LINE +
                     ResultsView.DEVIATION_MEASURE + COLON_SPACE.format(it.deviationMeasure) + NEW_LINE +
                     ResultsView.RMS_DEVIATION + COLON_SPACE.format(it.rmsDeviation) + NEW_LINE +
-                    ResultsView.R_SQUARE + COLON_SPACE.format(it.rSquare) + NEW_LINE +
-                    ResultsView.OTHER + COLON_SPACE.format(it.other) + NEW_LINE
+                    ResultsView.R_SQUARE + COLON_SPACE.format(it.rSquare) + NEW_LINE
+
+            if (it.other.isNotBlank()) {
+                result += ResultsView.OTHER + COLON_SPACE.format(it.other) + NEW_LINE
+            }
+
+            result
         }
     }
 

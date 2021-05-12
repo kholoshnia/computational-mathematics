@@ -1,39 +1,52 @@
 package ru.lab.views
 
-import javafx.geometry.Orientation
 import javafx.scene.control.Alert
+import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
 import ru.lab.controllers.ComputeController
-import ru.lab.controllers.FileController
+import ru.lab.controllers.FormController
+import ru.lab.model.Method
+import ru.lab.model.Variant
+import tornadofx.Fieldset
 import tornadofx.View
 import tornadofx.action
 import tornadofx.alert
 import tornadofx.button
+import tornadofx.combobox
 import tornadofx.field
 import tornadofx.fieldset
 import tornadofx.filterInput
 import tornadofx.form
 import tornadofx.hbox
 import tornadofx.isDouble
-import tornadofx.separator
 import tornadofx.singleAssign
 import tornadofx.textfield
+import tornadofx.toObservable
 
 
 class FormView : View() {
     companion object {
         private const val X_VALUES = "1.1 2.3 3.7 4.5 5.4 6.8 7.5 8.1 9.2 10.5 11.8 12.5"
         private const val Y_VALUES = "2.73 5.12 7.74 8.91 10.59 12.75 13.43 15.6 17.2 18.9 19.2 20.5"
+        private const val FUNCTION = "sin(x)"
     }
 
-    private val fileController: FileController by inject()
     private val computeController: ComputeController by inject()
     private val resultsView: ResultsView by inject()
+    private val formController: FormController by inject()
 
+    private var tableFieldset: Fieldset by singleAssign()
+    private var functionFieldset: Fieldset by singleAssign()
+
+    var variantComboBox: ComboBox<String> by singleAssign()
     var xValuesTextField: TextField by singleAssign()
     var yValuesTextField: TextField by singleAssign()
-    var leftTextField: TextField by singleAssign()
-    var rightTextField: TextField by singleAssign()
+    var functionTextField: TextField by singleAssign()
+    var leftBoundaryTextField: TextField by singleAssign()
+    var rightBoundaryTextField: TextField by singleAssign()
+    var partitioningTextField: TextField by singleAssign()
+    var methodComboBox: ComboBox<String> by singleAssign()
+    var searchValueTextField: TextField by singleAssign()
     var stepTextField: TextField by singleAssign()
 
     private fun isDoubleInput(input: String) = input
@@ -42,7 +55,32 @@ class FormView : View() {
         .isDouble()
 
     override val root = form {
-        fieldset("Values") {
+        fieldset("Function") {
+            field {
+                variantComboBox = combobox {
+                    items = Variant.values()
+                        .map { it.variant }
+                        .toList()
+                        .toObservable()
+                    selectionModel.selectFirst()
+
+                    setOnAction {
+                        tableFieldset.isVisible = formController.getVariant() == Variant.TABLE
+                        xValuesTextField.text = ""
+                        yValuesTextField.text = ""
+
+                        functionFieldset.isVisible = formController.getVariant() == Variant.FUNCTION
+                        functionTextField.text = ""
+                        leftBoundaryTextField.text = ""
+                        rightBoundaryTextField.text = ""
+                        partitioningTextField.text = ""
+                    }
+                }
+            }
+        }
+
+
+        tableFieldset = fieldset("Table") {
             field("X:") {
                 xValuesTextField = textfield(X_VALUES)
             }
@@ -50,17 +88,48 @@ class FormView : View() {
             field("Y:") {
                 yValuesTextField = textfield(Y_VALUES)
             }
+
+            managedProperty().bind(visibleProperty())
         }
 
-        fieldset("Parameters") {
+        functionFieldset = fieldset("Function") {
+            field {
+                functionTextField = textfield(FUNCTION)
+            }
+
             field("Left boundary:") {
-                leftTextField = textfield {
+                leftBoundaryTextField = textfield {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
 
             field("Right boundary:") {
-                rightTextField = textfield {
+                rightBoundaryTextField = textfield {
+                    filterInput { isDoubleInput(it.controlNewText) }
+                }
+            }
+
+            field("Partitioning:") {
+                partitioningTextField = textfield()
+            }
+
+            isVisible = false
+            managedProperty().bind(visibleProperty())
+        }
+
+        fieldset("Parameters") {
+            field("Method") {
+                methodComboBox = combobox {
+                    items = Method.values()
+                        .map { it.method }
+                        .toList()
+                        .toObservable()
+                    selectionModel.selectFirst()
+                }
+            }
+
+            field("Search value:") {
+                searchValueTextField = textfield("5") {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
@@ -73,75 +142,14 @@ class FormView : View() {
         }
 
         hbox(20) {
-            fieldset("Actions") {
+            fieldset {
                 field {
-                    button("Compute") {
+                    button("Show & Compute") {
                         action {
                             try {
                                 computeController.compute()
                             } catch (e: Exception) {
                                 alert(Alert.AlertType.WARNING, "Results error", e.message)
-                            }
-                        }
-                    }
-                }
-
-                field {
-                    button("Show") {
-                        action {
-                            val results = resultsView.getResults()
-
-                            if (results.isEmpty()) {
-                                alert(
-                                    Alert.AlertType.INFORMATION,
-                                    "No results",
-                                    "Please, compute results use show"
-                                )
-                            } else {
-                                resultsView.openWindow()
-                            }
-                        }
-                    }
-                }
-            }
-
-            separator(Orientation.VERTICAL)
-
-            fieldset("File") {
-                field {
-                    button("Import") {
-                        action {
-                            try {
-                                val values = fileController.importTable()
-
-                                if (values != null) {
-                                    xValuesTextField.text = values.first
-                                    yValuesTextField.text = values.second
-                                }
-                            } catch (e: Exception) {
-                                alert(Alert.AlertType.WARNING, "Import error", e.message)
-                            }
-                        }
-                    }
-                }
-
-                field {
-                    button("Export") {
-                        action {
-                            try {
-                                val results = resultsView.getResults()
-
-                                if (results.isEmpty()) {
-                                    alert(
-                                        Alert.AlertType.INFORMATION,
-                                        "No results",
-                                        "Please, compute results to use export"
-                                    )
-                                } else {
-                                    fileController.exportResults(results)
-                                }
-                            } catch (e: Exception) {
-                                alert(Alert.AlertType.WARNING, "Export error", e.message)
                             }
                         }
                     }
