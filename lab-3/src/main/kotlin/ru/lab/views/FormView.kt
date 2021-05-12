@@ -84,7 +84,7 @@ class FormView : View() {
             }
 
             field("Initial partitioning:") {
-                initialPartitioningTextField = textfield("4") {
+                initialPartitioningTextField = textfield("10") {
                     filterInput { isIntInput(it.controlNewText) }
                 }
             }
@@ -93,7 +93,7 @@ class FormView : View() {
                 field {
                     paddingTop = 10
                     accuracyCheckbox = checkbox("Use accuracy") {
-                        isSelected = true
+                        isSelected = false
                     }
                 }
 

@@ -32,7 +32,6 @@ class FormView : View() {
     }
 
     private val computeController: ComputeController by inject()
-    private val resultsView: ResultsView by inject()
     private val formController: FormController by inject()
 
     private var tableFieldset: Fieldset by singleAssign()
