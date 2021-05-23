@@ -29,6 +29,9 @@ class FormView : View() {
         private const val X_VALUES = "1.1 2.3 3.7 4.5 5.4 6.8 7.5 8.1 9.2 10.5 11.8 12.5"
         private const val Y_VALUES = "2.73 5.12 7.74 8.91 10.59 12.75 13.43 15.6 17.2 18.9 19.2 20.5"
         private const val FUNCTION = "sin(x)"
+        private const val LEFT_BOUNDARY = "-5"
+        private const val RIGHT_BOUNDARY = "5"
+        private const val PARTITIONING = "10"
     }
 
     private val computeController: ComputeController by inject()
@@ -65,14 +68,7 @@ class FormView : View() {
 
                     setOnAction {
                         tableFieldset.isVisible = formController.getVariant() == Variant.TABLE
-                        xValuesTextField.text = ""
-                        yValuesTextField.text = ""
-
                         functionFieldset.isVisible = formController.getVariant() == Variant.FUNCTION
-                        functionTextField.text = ""
-                        leftBoundaryTextField.text = ""
-                        rightBoundaryTextField.text = ""
-                        partitioningTextField.text = ""
                     }
                 }
             }
@@ -97,19 +93,19 @@ class FormView : View() {
             }
 
             field("Left boundary:") {
-                leftBoundaryTextField = textfield {
+                leftBoundaryTextField = textfield(LEFT_BOUNDARY) {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
 
             field("Right boundary:") {
-                rightBoundaryTextField = textfield {
+                rightBoundaryTextField = textfield(RIGHT_BOUNDARY) {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
 
             field("Partitioning:") {
-                partitioningTextField = textfield()
+                partitioningTextField = textfield(PARTITIONING)
             }
 
             isVisible = false

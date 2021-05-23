@@ -1,9 +1,9 @@
-package ru.lab.controllers.approximations
+package ru.lab.controllers.methods
 
 import tornadofx.Controller
 
 
-class NewtonMethod : Controller() {
+class LagrangeMethod : Controller() {
     fun getFunction(
         xValues: List<Double>,
         yValues: List<Double>
@@ -13,14 +13,14 @@ class NewtonMethod : Controller() {
         xValues.forEachIndexed { i, x ->
             val numerator = xValues
                 .filter { it != x }
-                .joinToString("*") { "x-$it" }
+                .joinToString("*") { "(x-$it)" }
 
             val denominator = xValues
                 .filter { it != x }
                 .map { x - it }
                 .reduce { acc, current -> acc * current }
 
-            stringList.add("$numerator/$denominator*${yValues[i]}")
+            stringList.add("($numerator)/$denominator*${yValues[i]}")
         }
 
         return stringList.joinToString("+")

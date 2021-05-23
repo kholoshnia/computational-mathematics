@@ -1,12 +1,8 @@
 package ru.lab.views
 
+import javafx.geometry.Insets
 import javafx.scene.control.TextField
-import tornadofx.View
-import tornadofx.hbox
-import tornadofx.label
-import tornadofx.paddingAll
-import tornadofx.singleAssign
-import tornadofx.textfield
+import tornadofx.*
 
 
 class ResultsView : View() {
@@ -23,7 +19,10 @@ class ResultsView : View() {
     override val root = hbox {
         paddingAll = 5.0
 
-        label("Series: ")
+        label("Series: ") {
+            paddingRight = 10.0
+        }
+
         seriesValueLabel = textfield {
             isEditable = false
             prefWidth = 1000.0

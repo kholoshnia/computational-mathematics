@@ -1,7 +1,7 @@
 package ru.lab.controllers
 
-import ru.lab.controllers.approximations.LagrangeMethod
-import ru.lab.controllers.approximations.NewtonMethod
+import ru.lab.controllers.methods.LagrangeMethod
+import ru.lab.controllers.methods.NewtonMethod
 import ru.lab.model.Method
 import ru.lab.model.Variant
 import ru.lab.views.GraphView
@@ -42,55 +42,31 @@ class ComputeController : Controller() {
         graphView.clear()
         resultsView.clear()
 
-        when (method) {
-            Method.LAGRANGE -> {
-                val lagrangeString = lagrangeMethod.getFunction(xValues, yValues)
-                val lagrangeFunction = functionController.getFunction(lagrangeString)
-
-                val lagrange = functionController.getSeries(
-                    "Lagrange",
-                    lagrangeFunction,
-                    xValues.first(),
-                    xValues.last(),
-                    step
-                )
-
-                graphView.addSeries(lagrange)
-                resultsView.setPolynomial(lagrangeString)
-
-                val search = functionController.getSeries(
-                    "Search value",
-                    searchValue,
-                    lagrangeFunction(searchValue)
-                )
-
-                graphView.addSeries(search)
-            }
-            else -> {
-                val newtonString = newtonMethod.getFunction(xValues, yValues)
-                val newtonFunction = functionController.getFunction(newtonString)
-
-                val newton = functionController.getSeries(
-                    "Newton",
-                    newtonFunction,
-                    xValues.first(),
-                    xValues.last(),
-                    step
-                )
-
-                graphView.addSeries(newton)
-                resultsView.setPolynomial(newtonString)
-
-                val search = functionController.getSeries(
-                    "Search value",
-                    searchValue,
-                    newtonFunction(searchValue)
-                )
-
-                graphView.addSeries(search)
-            }
+        val (functionString, name) = when (method) {
+            Method.LAGRANGE -> Pair(lagrangeMethod.getFunction(xValues, yValues), "Lagrange")
+            else -> Pair(newtonMethod.getFunction(xValues, yValues), "Newton")
         }
 
+        val function = functionController.getFunction(functionString)
+
+        val lagrange = functionController.getSeries(
+            name,
+            function,
+            xValues.first(),
+            xValues.last(),
+            step
+        )
+
+        graphView.addSeries(lagrange)
+        resultsView.setPolynomial(functionString)
+
+        val search = functionController.getSeries(
+            "Search value",
+            searchValue,
+            function(searchValue)
+        )
+
+        graphView.addSeries(search)
 
         val source = functionController.getSeries("Source", xValues, yValues)
         graphView.addSeries(source)
