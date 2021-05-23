@@ -26,8 +26,9 @@ import tornadofx.toObservable
 
 class FormView : View() {
     companion object {
-        private const val X_VALUES = "1.1 2.3 3.7 4.5 5.4 6.8 7.5 8.1 9.2 10.5 11.8 12.5"
-        private const val Y_VALUES = "2.73 5.12 7.74 8.91 10.59 12.75 13.43 15.6 17.2 18.9 19.2 20.5"
+        private const val X_VALUES = "0.25 0.30 0.35 0.40 0.45 0.50 0.55"
+        private const val Y_VALUES = "1.2557 2,1764 3,1218 4,0482 5,9875 6,9195 7,8359"
+        private const val SEARCH_VALUE = "0.283"
         private const val FUNCTION = "sin(x)"
         private const val LEFT_BOUNDARY = "-5"
         private const val RIGHT_BOUNDARY = "5"
@@ -124,7 +125,7 @@ class FormView : View() {
             }
 
             field("Search value:") {
-                searchValueTextField = textfield("5") {
+                searchValueTextField = textfield(SEARCH_VALUE) {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
             }

@@ -60,13 +60,15 @@ class ComputeController : Controller() {
         graphView.addSeries(lagrange)
         resultsView.setPolynomial(functionString)
 
+        val result = function(searchValue)
         val search = functionController.getSeries(
             "Search value",
             searchValue,
-            function(searchValue)
+            result
         )
 
         graphView.addSeries(search)
+        resultsView.setValue(result.toString())
 
         val source = functionController.getSeries("Source", xValues, yValues)
         graphView.addSeries(source)
