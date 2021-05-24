@@ -131,7 +131,7 @@ class FormView : View() {
             }
 
             field("Step:") {
-                stepTextField = textfield("0.1") {
+                stepTextField = textfield("0.5") {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
             }
