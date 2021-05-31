@@ -3,6 +3,7 @@ package ru.lab.controllers
 import javafx.scene.chart.XYChart
 import net.objecthunter.exp4j.ExpressionBuilder
 import ru.lab.model.Function
+import ru.lab.model.Ode
 import tornadofx.Controller
 
 
@@ -15,40 +16,12 @@ class FunctionController : Controller() {
         return Function(expression)
     }
 
-    fun getValues(
-        function: Function,
-        left: Double,
-        right: Double,
-        partitioning: Double
-    ): Pair<List<Double>, List<Double>> {
-        val step = (right - left) / partitioning
-
-        val xValues = ArrayList<Double>()
-        val yValues = ArrayList<Double>()
-
-        var x = left
-        while (x <= right) {
-            try {
-                xValues.add(x)
-                yValues.add(function(x))
-            } catch (_: ArithmeticException) {
-            }
-
-            x += step
-        }
-
-        return Pair(xValues, yValues)
-    }
-
-    fun getSeries(
-        name: String,
-        x: Double,
-        y: Double
-    ): XYChart.Series<Number, Number> {
-        val series = XYChart.Series<Number, Number>()
-        series.name = name
-        series.data.add(XYChart.Data(x, y))
-        return series
+    fun getOde(odeString: String): Ode {
+        val function = odeString.replace(",", ".")
+        val expression = ExpressionBuilder(function)
+            .variables(Ode.X_VARIABLE_NAME, Ode.Y_VARIABLE_NAME)
+            .build()
+        return Ode(expression)
     }
 
     fun getSeries(
@@ -84,7 +57,13 @@ class FunctionController : Controller() {
         series.name = name
 
         for (i in xValues.indices) {
-            series.data.add(XYChart.Data(xValues[i], yValues[i]))
+            if (xValues.size > 1000) {
+                if (i % (xValues.size / 100) == 0) {
+                    series.data.add(XYChart.Data(xValues[i], yValues[i]))
+                }
+            } else {
+                series.data.add(XYChart.Data(xValues[i], yValues[i]))
+            }
         }
 
         return series

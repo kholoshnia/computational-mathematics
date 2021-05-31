@@ -34,15 +34,15 @@ class FormController : Controller() {
 
     fun getLeftBoundary() = if (formView.leftBoundaryTextField.text.isNullOrBlank())
         throw IllegalArgumentException("Left boundary required")
-    else formView.leftBoundaryTextField.text.toDouble()
+    else toDouble(formView.leftBoundaryTextField.text)
 
     fun getRightBoundary() = if (formView.rightBoundaryTextField.text.isNullOrBlank())
         throw IllegalArgumentException("Right boundary required")
-    else formView.rightBoundaryTextField.text.toDouble()
+    else toDouble(formView.rightBoundaryTextField.text)
 
     fun getPartitioning() = if (formView.partitioningTextField.text.isNullOrBlank())
         throw IllegalArgumentException("Partitioning required")
-    else formView.partitioningTextField.text.toDouble()
+    else toDouble(formView.partitioningTextField.text)
 
     fun getMethod() = Method.find(formView.methodComboBox.value)
 
