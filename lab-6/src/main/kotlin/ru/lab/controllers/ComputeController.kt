@@ -27,14 +27,18 @@ class ComputeController : Controller() {
                 formController.getAccuracy(),
                 formController.getStep(),
                 left,
-                right
+                right,
+                formController.getSolution()
             )
             else -> eulerMethod.getFunction(
                 formController.getOde(),
                 formController.getInitialY(),
                 formController.getStep(),
                 left,
-                right
+                right,
+                formController.getSolution(),
+                formController.getAccuracy(),
+                true
             )
         }
 

@@ -4,7 +4,6 @@ import javafx.scene.control.Alert
 import javafx.scene.control.ComboBox
 import javafx.scene.control.TextField
 import ru.lab.controllers.ComputeController
-import ru.lab.controllers.FormController
 import ru.lab.model.Method
 import tornadofx.Field
 import tornadofx.View
@@ -20,20 +19,20 @@ import tornadofx.isDouble
 import tornadofx.singleAssign
 import tornadofx.textfield
 import tornadofx.toObservable
+import kotlin.math.E
 
 
 class FormView : View() {
     companion object {
-        private const val ODE = "3x^2"
-        private const val SOLUTION = "x^3"
-        private const val INITIAL_Y = "-8"
-        private const val LEFT_BOUNDARY = "-2"
+        private const val ODE = "-2y"
+        private const val SOLUTION = "2*$E^(-2x)"
+        private const val INITIAL_Y = "2"
+        private const val LEFT_BOUNDARY = "0"
         private const val RIGHT_BOUNDARY = "2"
-        private const val STEP = "0.5"
-        private const val ACCURACY = "0.1"
+        private const val STEP = "0.1"
+        private const val ACCURACY = "0.01"
     }
 
-    private val formController: FormController by inject()
     private val computeController: ComputeController by inject()
     private val resultsView: ResultsView by inject()
 
@@ -92,8 +91,6 @@ class FormView : View() {
                 accuracyTextField = textfield(ACCURACY) {
                     filterInput { isDoubleInput(it.controlNewText) }
                 }
-
-                isVisible = false
             }
         }
 
@@ -105,10 +102,6 @@ class FormView : View() {
                         .toList()
                         .toObservable()
                     selectionModel.selectFirst()
-
-                    setOnAction {
-                        accuracyField.isVisible = formController.getMethod() == Method.ADAMS
-                    }
                 }
             }
 
