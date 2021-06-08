@@ -12,10 +12,11 @@ class AdamsMethod : Controller() {
     private val resultsView: ResultsView by inject()
     private val eulerMethod: EulerMethod by inject()
 
-    private fun getListOf3(list: List<Double>): ArrayList<Double> {
+    private fun getListOf4(list: List<Double>): ArrayList<Double> {
         val result = ArrayList<Double>()
         result.add(list.first())
-        result.add(list[(list.size / 2.0).toInt()])
+        result.add(list[(list.size / 3.0).toInt()])
+        result.add(list[(list.size / 3.0 * 2.0).toInt()])
         result.add(list.last())
         return result
     }
@@ -37,27 +38,28 @@ class AdamsMethod : Controller() {
         var i = 0
 
         val (eulerX, eulerY) = eulerMethod.getFunction(
-            ode, initialY, step, left, left + 2 * step,
+            ode, initialY, step, left, left + 3 * step,
             solution, accuracy, true
         )
 
-        val xList = getListOf3(eulerX)
-        val yList = getListOf3(eulerY)
+        val xList = getListOf4(eulerX)
+        val yList = getListOf4(eulerY)
 
         resultX.addAll(xList)
         resultY.addAll(yList)
 
-        var x = left + 2 * step
+        var x = left + 3 * step
         while (x < right) {
-            val fi = ode(xList[2], yList[2])
-            val fi1 = ode(xList[1], yList[1])
-            val fi2 = ode(xList[0], yList[0])
+            val fi = ode(xList[3], yList[3])
+            val fi1 = ode(xList[2], yList[2])
+            val fi2 = ode(xList[1], yList[1])
+            val fi3 = ode(xList[0], yList[0])
 
-            var pred = yList[2] + step / 12.0 * (23.0 * fi - 16.0 * fi1 + 5.0 * fi2)
+            var pred = yList[3] + step / 24.0 * (55.0 * fi - 59.0 * fi1 + 37.0 * fi2 - 9.0 * fi3)
 
             do {
                 val fiPlus1 = ode(x, pred)
-                val corr = yList[2] + step / 12.0 * (5.0 * fiPlus1 + 8.0 * fi - fi1)
+                val corr = yList[3] + step / 24.0 * (9.0 * fiPlus1 + 19.0 * fi - 5 * fi1 + fi2)
 
                 if (accuracy > abs(corr - pred) / 29.0) {
                     break
@@ -74,8 +76,8 @@ class AdamsMethod : Controller() {
                 yList[yi] = yList[yi + 1]
             }
 
-            xList[2] = x
-            yList[2] = pred
+            xList[3] = x
+            yList[3] = pred
 
             x += step
 
